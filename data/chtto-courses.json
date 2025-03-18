@@ -1,0 +1,104 @@
+[
+  {
+    "courseLink": "https://www.noaonline.jp/dance/video/467619.html",
+    "lessonNumber": 1,
+    "episodes": [
+      {
+        "episodeNumber": 1,
+        "videoUrl": "https://player.vimeo.com/video/470894491"
+      },
+      {
+        "episodeNumber": 2,
+        "videoUrl": "https://player.vimeo.com/video/470894755"
+      },
+      {
+        "episodeNumber": 3,
+        "videoUrl": "https://player.vimeo.com/video/470896121"
+      },
+      {
+        "episodeNumber": 4,
+        "videoUrl": "https://player.vimeo.com/video/470896303"
+      }
+    ]
+  },
+  {
+    "courseLink": "https://www.noaonline.jp/dance/video/472390.html",
+    "lessonNumber": 2,
+    "episodes": [
+      {
+        "episodeNumber": 1,
+        "videoUrl": "https://player.vimeo.com/video/484657206"
+      },
+      {
+        "episodeNumber": 2,
+        "videoUrl": "https://player.vimeo.com/video/492355171"
+      },
+      {
+        "episodeNumber": 3,
+        "videoUrl": "https://player.vimeo.com/video/501773497"
+      }
+    ]
+  },
+  {
+    "courseLink": "https://www.noaonline.jp/dance/video/473969.html",
+    "lessonNumber": 3,
+    "episodes": [
+      {
+        "episodeNumber": 1,
+        "videoUrl": "https://player.vimeo.com/video/635006197"
+      },
+      {
+        "episodeNumber": 2,
+        "videoUrl": "https://player.vimeo.com/video/635020297"
+      },
+      {
+        "episodeNumber": 3,
+        "videoUrl": "https://player.vimeo.com/video/635037793"
+      },
+      {
+        "episodeNumber": 4,
+        "videoUrl": "https://player.vimeo.com/video/635044703"
+      }
+    ]
+  },
+  {
+    "courseLink": "https://www.noaonline.jp/dance/video/473968.html",
+    "lessonNumber": 4,
+    "episodes": [
+      {
+        "episodeNumber": 1,
+        "videoUrl": "https://player.vimeo.com/video/636165049"
+      },
+      {
+        "episodeNumber": 2,
+        "videoUrl": "https://player.vimeo.com/video/636214932"
+      },
+      {
+        "episodeNumber": 3,
+        "videoUrl": "https://player.vimeo.com/video/636805904"
+      },
+      {
+        "episodeNumber": 4,
+        "videoUrl": "https://player.vimeo.com/video/636152217"
+      }
+    ]
+  },
+  {
+    "courseLink": "https://www.noaonline.jp/dance/video/480109.html",
+    "lessonNumber": 5,
+    "episodes": [
+      {
+        "episodeNumber": 1,
+        "videoUrl": "https://player.vimeo.com/video/636983994"
+      },
+      {
+        "episodeNumber": 2,
+        "videoUrl": "https://player.vimeo.com/video/636997232"
+      },
+      {
+        "episodeNumber": 3,
+        "videoUrl": "https://player.vimeo.com/video/636992660"
+      }
+    ]
+  }
+] 

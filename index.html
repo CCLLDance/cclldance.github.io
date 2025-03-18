@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google-site-verification" content="FNQOf5fQCcxjlyI4EslUbXXeCHIHmSwtMdrGVXIZ5pM" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舞蹈课程目录</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 预加载动画 -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+
+    <!-- 背景粒子效果 -->
+    <div id="particles-js"></div>
+
+    <div class="container-fluid">
+        <!-- 左侧导航栏 -->
+        <div class="sidebar">
+            <!-- 横向导航按钮 -->
+            <ul class="nav nav-pills nav-fill" id="courseNav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-target="CHTTO">CHTTO</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-target="HIPHOP">HIPHOP</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-target="SOUL">SOUL</a>
+                </li>
+            </ul>
+
+            <!-- 课程列表容器 -->
+            <div class="course-containers">
+                <div id="CHTTO" class="course-container active">
+                    <div class="course-list" id="CHTTO-list">
+                        <div class="loading-indicator">
+                            <div class="spinner"></div>
+                            <p>加载课程数据中...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="HIPHOP" class="course-container">
+                    <div class="course-list" id="HIPHOP-list">
+                        <div class="loading-indicator">
+                            <div class="spinner"></div>
+                            <p>加载课程数据中...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="SOUL" class="course-container">
+                    <div class="course-list" id="SOUL-list">
+                        <div class="loading-indicator">
+                            <div class="spinner"></div>
+                            <p>加载课程数据中...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧视频播放区 -->
+        <div class="content">
+            <div class="video-player" id="videoPlayer">
+                <div class="message">选择课程视频开始播放</div>
+            </div>
+            <a href="#" class="course-link-btn" id="courseLinkBtn" target="_blank">
+                <i class="bi bi-box-arrow-up-right"></i>查看课程
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="data-loader.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 导航切换功能
+        const navLinks = document.querySelectorAll('.nav-link');
+        const courseContainers = document.querySelectorAll('.course-container');
+        const courseLinkBtn = document.getElementById('courseLinkBtn');
+        
+        // 存储每个列表的滚动位置
+        const scrollPositions = {
+            'CHTTO': 0,
+            'HIPHOP': 0,
+            'SOUL': 0
+        };
+        
+        // 当前活动的课程类型
+        let activeCategory = 'CHTTO';
+        
+        // 导航点击处理
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                
+                // 保存当前滚动位置
+                const currentList = document.getElementById(`${activeCategory}-list`);
+                if (currentList) {
+                    scrollPositions[activeCategory] = currentList.scrollTop;
+                }
+                
+                // 更新导航活动状态
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 显示对应课程内容
+                courseContainers.forEach(container => {
+                    container.classList.remove('active');
+                    if (container.id === targetId) {
+                        container.classList.add('active');
+                        
+                        // 记录当前活动的课程类型
+                        activeCategory = targetId;
+                        
+                        // 恢复滚动位置
+                        const targetList = document.getElementById(`${targetId}-list`);
+                        if (targetList) {
+                            setTimeout(() => {
+                                targetList.scrollTop = scrollPositions[targetId];
+                            }, 10);
+                        }
+                    }
+                });
+            });
+        });
+        
+        // 页面加载时恢复记忆的滚动位置
+        const initialList = document.getElementById('CHTTO-list');
+        if (initialList) {
+            initialList.scrollTop = scrollPositions['CHTTO'];
+        }
+        
+        // 添加页面加载动画
+        window.addEventListener('load', function() {
+            // 延迟一点时间确保所有内容都已加载
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 800);
+        });
+    });
+    </script>
+    
+    <!-- 粒子效果配置 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 50,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": ["#7b2cbf", "#e83283"]
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.2,
+                        "random": true
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#7b2cbf",
+                        "opacity": 0.1,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 0.3
+                            }
+                        },
+                        "push": {
+                            "particles_nb": 3
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+    </script>
+</body>
+</html> 
