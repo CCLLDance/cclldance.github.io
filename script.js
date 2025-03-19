@@ -3,6 +3,70 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-link');
     const courseContainers = document.querySelectorAll('.course-container');
     const courseLinkBtn = document.getElementById('courseLinkBtn');
+    const videoPlayer = document.getElementById('videoPlayer');
+    
+    // 初始化游戏iframe
+    function initGameFrame() {
+        if (videoPlayer) {
+            // 先显示加载动画
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'iframe-loading';
+            loadingDiv.innerHTML = `
+                <div class="spinner"></div>
+                <p style="color: #fff; margin-top: 10px; font-size: 14px;">加载游戏中...</p>
+            `;
+            videoPlayer.appendChild(loadingDiv);
+            
+            // 创建游戏iframe
+            const gameFrame = document.createElement('iframe');
+            gameFrame.id = 'snakeGameFrame';
+            gameFrame.src = 'game/index.html';
+            gameFrame.className = 'snake-game-iframe';
+            gameFrame.style.display = 'block';
+            gameFrame.style.opacity = '0'; // 初始不可见，等加载完成后显示
+            gameFrame.frameBorder = '0';
+            gameFrame.allowFullscreen = true;
+            videoPlayer.appendChild(gameFrame);
+            
+            // iframe加载完成后移除加载动画
+            gameFrame.onload = function() {
+                if (loadingDiv.parentNode) {
+                    setTimeout(() => {
+                        gameFrame.style.opacity = '1'; // 显示iframe
+                        loadingDiv.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingDiv.remove();
+                        }, 300);
+                    }, 500);
+                }
+            };
+            
+            return gameFrame;
+        }
+        return null;
+    }
+    
+    // 初始化游戏
+    let snakeGameFrame = document.getElementById('snakeGameFrame') || initGameFrame();
+    let isGameVisible = true; // 默认显示游戏
+    
+    // 处理游戏iframe相关功能
+    function handleGameIframe() {
+        // 当视频被点击时，隐藏游戏显示视频
+        if (isGameVisible && snakeGameFrame) {
+            // 保存iframe引用，因为后面会清空videoPlayer内容
+            const gameFrameRef = snakeGameFrame;
+            gameFrameRef.style.display = 'none';
+            isGameVisible = false;
+            
+            // 避免移除iframe导致资源重新加载
+            if (gameFrameRef.parentNode) {
+                gameFrameRef.parentNode.removeChild(gameFrameRef);
+                // 存储引用供后续恢复使用
+                window.savedGameFrame = gameFrameRef;
+            }
+        }
+    }
     
     // 移动设备检测
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -133,7 +197,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 视频播放功能
     const videoRows = document.querySelectorAll('.video-row');
-    const videoPlayer = document.getElementById('videoPlayer');
     
     // 从localStorage获取保存的视频播放进度数据
     let videoProgressData = JSON.parse(localStorage.getItem('videoProgressData') || '{}');
@@ -271,69 +334,83 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 加载新视频
     function loadNewVideo(videoId, videoUrl, courseLink) {
-        // 保存当前视频进度
-        const currentIframe = videoPlayer.querySelector('iframe');
-        if (currentIframe) {
-            postMessageToVimeo(currentIframe, 'getCurrentTime', null);
-        }
-        
-        // 更新当前视频数据
+        // 更新视频ID
         currentVideoData.id = videoId;
         currentVideoData.url = videoUrl;
         
-        // 清除欢迎消息
-        const welcomeMessage = videoPlayer.querySelector('.message');
-        if (welcomeMessage) {
-            welcomeMessage.style.display = 'none';
+        // 隐藏游戏iframe
+        if (snakeGameFrame && snakeGameFrame.parentNode) {
+            // 暂存引用以便后续恢复
+            window.savedGameFrame = snakeGameFrame;
+            snakeGameFrame.parentNode.removeChild(snakeGameFrame);
+            isGameVisible = false;
         }
-
-        // 高亮选中行
-        videoRows.forEach(r => r.classList.remove('selected'));
-        const selectedRow = document.querySelector(`[data-video-url="${videoUrl}"]`);
-        if (selectedRow) {
-            selectedRow.classList.add('selected');
-        }
-
-        // 添加自动播放参数
-        const autoplayUrl = videoUrl.includes('?') 
-            ? `${videoUrl}&autoplay=1&muted=0&playsinline=1` 
-            : `${videoUrl}?autoplay=1&muted=0&playsinline=1`;
-
-        // 更新视频播放器
-        videoPlayer.innerHTML = `<iframe src="${autoplayUrl}" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" playsinline></iframe>`;
         
-        // 更新课程链接按钮
-        if (courseLink) {
+        // 清除当前视频播放器内容
+        videoPlayer.innerHTML = '';
+        
+        // 显示加载消息
+        const loadingMessage = document.createElement('div');
+        loadingMessage.className = 'video-loading message';
+        loadingMessage.innerHTML = `
+            <div class="spinner"></div>
+            <p>加载视频中...</p>
+        `;
+        videoPlayer.appendChild(loadingMessage);
+        
+        // 设置课程链接
+        if (courseLinkBtn && courseLink) {
             courseLinkBtn.href = courseLink;
-            courseLinkBtn.style.display = 'block';
-        } else {
-            courseLinkBtn.style.display = 'none';
+            courseLinkBtn.classList.remove('subtle');
+        } else if (courseLinkBtn) {
+            courseLinkBtn.href = '#';
+            courseLinkBtn.classList.add('subtle');
         }
-
-        // 保存最后播放的视频ID
-        localStorage.setItem('lastVideoId', videoId);
-
-        // 设置新iframe加载完成后的处理
-        const newIframe = videoPlayer.querySelector('iframe');
-        if (newIframe) {
-            // 更新当前视频的iframe引用
-            currentVideoData.iframe = newIframe;
+        
+        // 延迟一小段时间以显示加载动画
+        setTimeout(() => {
+            // 清除加载消息
+            videoPlayer.innerHTML = '';
             
-            newIframe.onload = function() {
-                this.classList.add('loaded');
+            // 创建视频iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = videoUrl;
+            iframe.width = '100%';
+            iframe.height = '100%';
+            iframe.frameBorder = '0';
+            iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+            iframe.allowFullscreen = true;
+            iframe.className = 'video-iframe';
+            
+            // 添加iframe到播放器
+            videoPlayer.appendChild(iframe);
+            
+            // 保存iframe引用
+            currentVideoData.iframe = iframe;
+            
+            // 尝试恢复上次的播放进度
+            if (videoProgressData[videoId] && videoProgressData[videoId].time) {
+                const savedTime = videoProgressData[videoId].time;
+                // 留一些余量，避免从视频末尾开始播放
+                const timeToSeek = Math.max(0, savedTime - 2);
                 
-                // 恢复之前保存的进度
-                const savedProgress = videoProgressData[videoId];
-                if (savedProgress && typeof savedProgress.time === 'number') {
-                    setTimeout(() => {
-                        postMessageToVimeo(newIframe, 'seekTo', savedProgress.time);
-                    }, 1000); // 等待1秒确保视频已加载
-                }
-            };
-        }
-
-        // 设置视频进度监控
-        setupVideoMonitoring();
+                // 视频加载完毕后跳转到保存的播放位置
+                setTimeout(() => {
+                    postMessageToVimeo(iframe, 'seekTo', timeToSeek);
+                    postMessageToVimeo(iframe, 'play');
+                    currentVideoData.isPlaying = true;
+                }, 1500);
+            } else {
+                // 没有保存的进度，直接播放
+                setTimeout(() => {
+                    postMessageToVimeo(iframe, 'play');
+                    currentVideoData.isPlaying = true;
+                }, 1000);
+            }
+            
+            // 设置视频监控
+            setupVideoMonitoring();
+        }, 500);
     }
     
     // 恢复上一个播放的视频
@@ -690,4 +767,150 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', function() {
         document.body.classList.add('loaded');
     });
+    
+    // 显示游戏，隐藏视频
+    function showGameFrame() {
+        // 清除视频播放器内容
+        videoPlayer.innerHTML = '';
+        
+        // 先显示加载动画
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'iframe-loading';
+        loadingDiv.innerHTML = `
+            <div class="spinner"></div>
+            <p style="color: #fff; margin-top: 10px; font-size: 14px;">加载游戏中...</p>
+        `;
+        videoPlayer.appendChild(loadingDiv);
+        
+        // 使用保存的游戏iframe引用，避免重新加载
+        if (window.savedGameFrame) {
+            window.savedGameFrame.style.display = 'block';
+            window.savedGameFrame.style.opacity = '0'; // 初始不可见，等加载动画显示后再显示
+            videoPlayer.appendChild(window.savedGameFrame);
+            // 更新snakeGameFrame引用
+            snakeGameFrame = window.savedGameFrame;
+            isGameVisible = true;
+            
+            // 短暂延迟后显示iframe
+            setTimeout(() => {
+                snakeGameFrame.style.opacity = '1';
+                loadingDiv.style.opacity = '0';
+                setTimeout(() => {
+                    loadingDiv.remove();
+                }, 300);
+            }, 500);
+        } else if (snakeGameFrame) {
+            snakeGameFrame.style.display = 'block';
+            snakeGameFrame.style.opacity = '0';
+            videoPlayer.appendChild(snakeGameFrame);
+            isGameVisible = true;
+            
+            // 短暂延迟后显示iframe
+            setTimeout(() => {
+                snakeGameFrame.style.opacity = '1';
+                loadingDiv.style.opacity = '0';
+                setTimeout(() => {
+                    loadingDiv.remove();
+                }, 300);
+            }, 500);
+        } else {
+            // 若没有保存的iframe引用，创建新的iframe
+            const newGameFrame = document.createElement('iframe');
+            newGameFrame.id = 'snakeGameFrame';
+            newGameFrame.src = 'game/index.html';
+            newGameFrame.className = 'snake-game-iframe';
+            newGameFrame.style.opacity = '0';
+            newGameFrame.frameBorder = '0';
+            newGameFrame.allowFullscreen = true;
+            videoPlayer.appendChild(newGameFrame);
+            snakeGameFrame = newGameFrame;
+            isGameVisible = true;
+            
+            // iframe加载完成后显示
+            newGameFrame.onload = function() {
+                setTimeout(() => {
+                    newGameFrame.style.opacity = '1';
+                    loadingDiv.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingDiv.remove();
+                    }, 300);
+                }, 500);
+            };
+        }
+        
+        // 保存当前视频进度并重置当前视频数据
+        if (currentVideoData.id && currentVideoData.iframe) {
+            postMessageToVimeo(currentVideoData.iframe, 'getCurrentTime');
+            currentVideoData.iframe = null;
+            currentVideoData.isPlaying = false;
+        }
+    }
+    
+    // 添加返回游戏按钮
+    function addReturnToGameButton() {
+        // 创建返回游戏按钮
+        const returnButton = document.createElement('button');
+        returnButton.className = 'return-to-game-btn';
+        returnButton.innerHTML = '<i class="bi bi-joystick"></i>';
+        returnButton.title = '返回游戏';
+        
+        // 添加样式
+        returnButton.style.cssText = `
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9d19ff 0%, #ff2a6a 100%);
+            border: none;
+            color: #f0f8ff;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(157, 25, 255, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        `;
+        
+        // 点击返回游戏
+        returnButton.addEventListener('click', function() {
+            showGameFrame();
+            this.style.opacity = '0';
+            this.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                this.remove();
+            }, 300);
+        });
+        
+        // 添加到视频播放器
+        videoPlayer.appendChild(returnButton);
+        
+        // 显示按钮动画
+        setTimeout(() => {
+            returnButton.style.opacity = '1';
+            returnButton.style.transform = 'translateY(0)';
+        }, 100);
+    }
+    
+    // 在加载视频时添加返回游戏按钮
+    function addReturnButtonToVideo() {
+        if (!isGameVisible) {
+            // 等待视频加载完毕再添加按钮
+            setTimeout(() => {
+                addReturnToGameButton();
+            }, 1500);
+        }
+    }
+    
+    // 修改loadNewVideo函数，添加返回游戏按钮
+    const originalLoadNewVideo = loadNewVideo;
+    loadNewVideo = function(videoId, videoUrl, courseLink) {
+        originalLoadNewVideo(videoId, videoUrl, courseLink);
+        addReturnButtonToVideo();
+    };
 });

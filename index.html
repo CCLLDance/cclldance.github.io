@@ -15,6 +15,91 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&display=swap">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="game/css/snake.css">
+    <style>
+        /* iframe样式 */
+        .snake-game-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(157, 25, 255, 0.3);
+            transition: all 0.3s ease;
+            z-index: 10; /* 确保iframe在最上层 */
+            display: block; /* 确保iframe可见 */
+            opacity: 1;
+        }
+        
+        /* 当iframe获得焦点时 */
+        .snake-game-iframe:focus {
+            outline: none;
+            box-shadow: 0 0 25px rgba(157, 25, 255, 0.5);
+        }
+        
+        /* 确保视频播放器区域的样式正确 */
+        .video-player {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #0d0b2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* iframe容器的加载动画 */
+        .iframe-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(13, 11, 42, 0.8);
+            z-index: 15; /* 确保加载动画在iframe上层 */
+            border-radius: 8px;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* 加载动画的旋转器 */
+        .iframe-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: #9d19ff;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 移动设备适配 */
+        @media (max-width: 768px) {
+            .snake-game-iframe {
+                border-radius: 4px;
+            }
+            .video-player {
+                border-radius: 4px;
+            }
+            .iframe-loading {
+                border-radius: 4px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- 预加载动画 -->
@@ -120,36 +205,13 @@
         <div class="content">
             <!-- 视频播放器区域 -->
             <div class="video-player" id="videoPlayer">
-                <!-- 视频模式消息 -->
-                <div class="video-message message" id="videoMessage">
-                    <i class="bi bi-play-circle"></i>
-                    <p>选择课程视频开始播放</p>
+                <!-- 游戏加载动画 -->
+                <div class="iframe-loading" id="gameLoading">
+                    <div class="spinner"></div>
+                    <p style="color: #fff; margin-top: 10px; font-size: 14px;">加载游戏中...</p>
                 </div>
-                
-                <!-- 贪吃蛇游戏容器 -->
-                <div class="snake-game-container" id="snakeGameContainer">
-                    <!-- 游戏画布 -->
-                    <canvas id="snakeCanvas" class="snake-game-canvas"></canvas>
-                    
-                    <!-- 游戏UI层 -->
-                    <div class="snake-game-ui">
-                        <!-- 控制按钮 -->
-                        <div class="snake-game-controls">
-                            <button id="muteBtn" class="snake-game-btn">
-                                <i class="bi bi-volume-up-fill"></i>
-                            </button>
-                            <button id="pauseBtn" class="snake-game-btn">
-                                <i class="bi bi-pause-fill"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 开始屏幕 -->
-                    <div id="startScreen" class="snake-game-start-screen">
-                        <h1 class="snake-game-title">SNAKE GAME</h1>
-                        <button id="startBtn" class="snake-game-start-btn" onclick="window.startSnakeGame()">START GAME</button>
-                    </div>
-                </div>
+                <!-- 贪吃蛇游戏iframe -->
+                <iframe id="snakeGameFrame" src="game/index.html" class="snake-game-iframe" style="opacity: 0;" frameborder="0" allowfullscreen onload="this.style.opacity='1'; document.getElementById('gameLoading').style.opacity='0'; setTimeout(() => document.getElementById('gameLoading').remove(), 300);"></iframe>
             </div>
             
             <a href="#" class="course-link-btn subtle" id="courseLinkBtn" target="_blank">
@@ -164,6 +226,5 @@
     <script src="data-loader.js"></script>
     <script src="script.js"></script>
     <script src="animations.js"></script>
-    <script type="module" src="game/js/main.js"></script>
 </body>
 </html> 
