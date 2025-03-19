@@ -303,11 +303,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 添加自动播放参数
         const autoplayUrl = videoUrl.includes('?') 
-            ? `${videoUrl}&autoplay=1&muted=0` 
-            : `${videoUrl}?autoplay=1&muted=0`;
+            ? `${videoUrl}&autoplay=1&muted=1&playsinline=1` 
+            : `${videoUrl}?autoplay=1&muted=1&playsinline=1`;
 
         // 更新视频播放器
-        videoPlayer.innerHTML = `<iframe src="${autoplayUrl}" allowfullscreen allow="autoplay"></iframe>`;
+        videoPlayer.innerHTML = `<iframe src="${autoplayUrl}" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" playsinline></iframe>`;
         
         // 更新课程链接按钮
         if (courseLink) {
@@ -508,6 +508,29 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isMobile) {
             addTouchSupport();
             adjustVideoPlayerForMobile();
+            
+            // 增强移动设备上的视频自动播放支持
+            const enhanceMobileAutoplay = () => {
+                const iframe = document.querySelector('#videoPlayer iframe');
+                if (iframe && iframe.contentWindow) {
+                    // 尝试通过触发用户交互后自动播放
+                    document.addEventListener('touchstart', function autoplayHandler() {
+                        // 尝试发送播放命令
+                        try {
+                            postMessageToVimeo(iframe, 'play');
+                        } catch (e) {
+                            console.log('Mobile autoplay attempt:', e);
+                        }
+                        // 只执行一次
+                        document.removeEventListener('touchstart', autoplayHandler);
+                    }, { once: true });
+                }
+            };
+            
+            // 视频加载后尝试增强自动播放
+            document.addEventListener('click', function() {
+                setTimeout(enhanceMobileAutoplay, 1000);
+            }, { passive: true });
         }
     }
     
