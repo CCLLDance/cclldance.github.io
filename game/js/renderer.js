@@ -53,28 +53,43 @@ class SnakeRenderer {
     resizeCanvas() {
         // 获取父容器尺寸
         const parent = this.canvas.parentElement;
-        const containerWidth = parent.clientWidth || window.innerWidth;
-        const containerHeight = parent.clientHeight || window.innerHeight;
         
-        // 使用固定的网格数量，确保画布比例一致
+        // 确保有效的父容器
+        if (!parent) return;
+        
+        const containerWidth = parent.clientWidth;
+        const containerHeight = parent.clientHeight;
+        
+        // 确保有效的容器尺寸
+        if (containerWidth <= 0 || containerHeight <= 0) return;
+        
+        // 计算可用空间
         const gridSize = this.options.gridSize;
-        let gridCount = Math.min(this.options.maxGridWidth, this.options.maxGridHeight);
         
-        // 设置画布尺寸为网格的整数倍
+        // 确保游戏区域尺寸合适，使用父容器的尺寸
+        const size = Math.min(containerWidth, containerHeight);
+        
+        // 计算能容纳的网格数量
+        let gridCount = Math.floor(size / gridSize);
+        
+        // 确保网格数量不超过设置的最大值
+        gridCount = Math.min(gridCount, this.options.maxGridWidth, this.options.maxGridHeight);
+        
+        // 计算实际画布大小
         const canvasSize = gridCount * gridSize;
         
-        // 确保设备像素比考虑
-        const dpr = window.devicePixelRatio || 1;
+        // 设置CSS尺寸 - 让画布填充整个容器
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
         
-        // 设置CSS尺寸
-        this.canvas.style.width = `${canvasSize}px`;
-        this.canvas.style.height = `${canvasSize}px`;
+        // 考虑设备像素比
+        const dpr = window.devicePixelRatio || 1;
         
         // 设置画布实际尺寸 (考虑设备像素比)
         this.canvas.width = canvasSize * dpr;
         this.canvas.height = canvasSize * dpr;
         
-        // 缩放上下文
+        // 缩放上下文以匹配像素比
         this.ctx.scale(dpr, dpr);
         
         // 更新游戏区域大小
@@ -82,12 +97,13 @@ class SnakeRenderer {
         this.boardHeight = gridCount;
         
         // 设置游戏结束消息的位置
-        if (this.options.gameOverPosition.x === null) {
-            this.options.gameOverPosition.x = canvasSize / 2;
-        }
-        if (this.options.gameOverPosition.y === null) {
-            this.options.gameOverPosition.y = canvasSize / 2;
-        }
+        this.options.gameOverPosition.x = canvasSize / 2;
+        this.options.gameOverPosition.y = canvasSize / 2;
+        
+        // 确保上下文属性在重新调整大小后保持一致
+        this.ctx.imageSmoothingEnabled = false;
+        
+        console.log(`Canvas resized: ${this.boardWidth}x${this.boardHeight} grids, ${canvasSize}x${canvasSize} pixels`);
     }
     
     updatePulse() {

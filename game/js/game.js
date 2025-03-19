@@ -172,6 +172,11 @@ class SnakeGame {
         if (typeof this.options.onScoreUpdate === 'function') {
             this.options.onScoreUpdate(score, this.highScore);
         }
+        
+        // 如果设置了onScoreUpdate回调函数，调用它
+        if (typeof this.onScoreUpdate === 'function') {
+            this.onScoreUpdate(score);
+        }
     }
     
     handleGameOver(score) {
@@ -208,19 +213,47 @@ class SnakeGame {
     
     resize() {
         // 调整游戏大小以适应窗口变化
+        console.log("Starting resize process...");
+        
+        // 调整渲染器的画布大小
         this.renderer.resizeCanvas();
         
         // 获取新的游戏区域尺寸
         const boardSize = this.renderer.getBoardSize();
+        console.log("New board size:", boardSize);
         
         // 更新蛇的游戏区域
         this.snake.config.boardWidth = boardSize.width;
         this.snake.config.boardHeight = boardSize.height;
         
-        // 如果游戏正在进行，可能需要重新定位食物
+        // 如果游戏正在进行，重新定位食物确保在视野内
         if (this.gameActive && !this.gamePaused) {
             this.snake.createFood();
         }
+        
+        // 强制进行一次立即渲染
+        if (this.gameActive) {
+            const gameState = this.snake.getState();
+            this.renderer.render(gameState);
+        } else {
+            // 如果游戏未开始，也需要渲染一个初始状态
+            const initialState = {
+                snake: this.snake.getBody(),
+                food: this.snake.food,
+                score: 0,
+                gameOver: false
+            };
+            this.renderer.render(initialState);
+        }
+        
+        // 额外的可视化反馈，确保画布更新
+        const canvas = this.canvas;
+        canvas.style.opacity = "0.8";
+        setTimeout(() => {
+            canvas.style.opacity = "1";
+        }, 50);
+        
+        console.log("Game resize completed. Board dimensions:", boardSize.width, "x", boardSize.height);
     }
     
     destroy() {
