@@ -83,7 +83,7 @@ body.loaded {
 }
 
 .sidebar {
-    width: 320px;
+    width: 280px;
     background-color: var(--dark-glass);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -108,38 +108,44 @@ body.loaded {
 
 /* 导航按钮样式 - 更前卫设计 */
 .nav-pills {
-    padding: 1rem 0.6rem;
-    border-bottom: 1px solid var(--border-color);
+    padding: 0.8rem;
+    margin: 0.6rem;
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
-    background-color: rgba(15, 15, 45, 0.7);
+    background-color: rgba(15, 15, 45, 0.3);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     position: sticky;
     top: 0;
     z-index: 10;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), inset 0 0 20px rgba(157, 25, 255, 0.05);
+    overflow: hidden;
 }
 
 .nav-pills .nav-link {
     color: var(--text-color);
-    border-radius: 16px;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    background-color: rgba(157, 25, 255, 0.1);
-    padding: 0.7rem 0.9rem;
-    margin: 0 5px;
-    font-size: 0.95rem;
+    border-radius: 14px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: transparent;
+    padding: 0.8rem 0.4rem;
+    margin: 0 3px;
+    font-size: 0.9rem;
     font-weight: 600;
-    border: 1px solid rgba(157, 25, 255, 0.2);
+    border: none;
     position: relative;
     overflow: hidden;
-    min-width: 85px;
-    width: 33%;
+    min-width: 70px;
+    width: 25%;
     text-align: center;
-    letter-spacing: 0.6px;
-    will-change: transform, box-shadow;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     text-shadow: var(--text-glow);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(157, 25, 255, 0.3);
+    will-change: transform, box-shadow;
 }
 
 .nav-pills .nav-link:before {
@@ -150,17 +156,33 @@ body.loaded {
     width: 0;
     height: 100%;
     background: var(--accent-gradient);
-    opacity: 0.3;
+    opacity: 0.2;
     transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: -1;
 }
 
+.nav-pills .nav-link i {
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-pills .nav-link span {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: opacity 0.3s ease;
+}
+
 .nav-pills .nav-link:hover {
-    background-color: var(--hover-color);
-    border-color: var(--accent-tertiary);
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25), 0 0 20px rgba(157, 25, 255, 0.3), inset 0 0 10px rgba(157, 25, 255, 0.2);
-    text-shadow: 0 0 4px rgba(255, 255, 255, 0.8), 0 0 8px rgba(0, 229, 255, 0.5);
+    background-color: rgba(157, 25, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(157, 25, 255, 0.1);
+}
+
+.nav-pills .nav-link:hover i {
+    transform: scale(1.2);
 }
 
 .nav-pills .nav-link:hover:before {
@@ -168,12 +190,120 @@ body.loaded {
 }
 
 .nav-pills .nav-link.active {
+    background-color: rgba(157, 25, 255, 0.15);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(157, 25, 255, 0.3);
+    transform: translateY(-2px);
+    position: relative;
+    z-index: 2;
+}
+
+.nav-pills .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+    width: 70%;
+    height: 3px;
     background: var(--accent-gradient);
-    color: white;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(157, 25, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
-    transform: translateY(-4px) scale(1.05);
-    text-shadow: 0 0 8px rgba(255, 255, 255, 1);
-    border-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    box-shadow: 0 0 8px var(--accent-color);
+}
+
+.nav-pills .nav-link.active i {
+    color: var(--accent-tertiary);
+    text-shadow: 0 0 10px var(--accent-tertiary);
+    transform: scale(1.2);
+}
+
+.nav-pills .nav-link.active span {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    font-weight: 800;
+}
+
+/* 根据data-color属性定制导航按钮 */
+.nav-pills .nav-link[data-color="purple"]::after {
+    background: linear-gradient(135deg, #9d19ff 0%, #b265ff 100%);
+    box-shadow: 0 0 8px #9d19ff;
+}
+
+.nav-pills .nav-link[data-color="pink"]::after {
+    background: linear-gradient(135deg, #ff2a6a 0%, #ff6799 100%);
+    box-shadow: 0 0 8px #ff2a6a;
+}
+
+.nav-pills .nav-link[data-color="blue"]::after {
+    background: linear-gradient(135deg, #00e5ff 0%, #6effff 100%);
+    box-shadow: 0 0 8px #00e5ff;
+}
+
+.nav-pills .nav-link[data-color="green"]::after {
+    background: linear-gradient(135deg, #00ff8f 0%, #6dffb8 100%);
+    box-shadow: 0 0 8px #00ff8f;
+}
+
+.nav-pills .nav-link.active[data-color="purple"] i {
+    color: #9d19ff;
+    text-shadow: 0 0 10px #9d19ff;
+}
+
+.nav-pills .nav-link.active[data-color="pink"] i {
+    color: #ff2a6a;
+    text-shadow: 0 0 10px #ff2a6a;
+}
+
+.nav-pills .nav-link.active[data-color="blue"] i {
+    color: #00e5ff;
+    text-shadow: 0 0 10px #00e5ff;
+}
+
+.nav-pills .nav-link.active[data-color="green"] i {
+    color: #00ff8f;
+    text-shadow: 0 0 10px #00ff8f;
+}
+
+.nav-pills .nav-link.active[data-color="purple"] span {
+    background: linear-gradient(135deg, #9d19ff 0%, #b265ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.nav-pills .nav-link.active[data-color="pink"] span {
+    background: linear-gradient(135deg, #ff2a6a 0%, #ff6799 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.nav-pills .nav-link.active[data-color="blue"] span {
+    background: linear-gradient(135deg, #00e5ff 0%, #6effff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.nav-pills .nav-link.active[data-color="green"] span {
+    background: linear-gradient(135deg, #00ff8f 0%, #6dffb8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* 导航按钮悬停时图标的颜色变化 */
+.nav-pills .nav-link[data-color="purple"]:hover i {
+    color: #b265ff;
+}
+
+.nav-pills .nav-link[data-color="pink"]:hover i {
+    color: #ff6799;
+}
+
+.nav-pills .nav-link[data-color="blue"]:hover i {
+    color: #6effff;
+}
+
+.nav-pills .nav-link[data-color="green"]:hover i {
+    color: #6dffb8;
 }
 
 /* 课程容器样式 - 提升深度感 */
@@ -429,6 +559,9 @@ body.loaded {
     background-color: #000;
     overflow: hidden;
     box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8);
+    background-image: 
+        radial-gradient(circle at 30% 70%, rgba(157, 25, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(0, 229, 255, 0.05) 0%, transparent 50%);
 }
 
 .video-player iframe, #vimeoPlayer {
@@ -457,41 +590,231 @@ body.loaded {
     text-shadow: var(--text-glow);
 }
 
+/* 无视频播放时的消息样式 */
 .message {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-color);
-    font-size: 1.3rem;
-    opacity: 0.9;
-    text-shadow: var(--neon-glow);
-    letter-spacing: 1px;
-    animation: pulse 2s ease-in-out infinite;
-    background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary), var(--accent-tertiary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 300% 300%;
-    animation: textShine 3s ease infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 85%;
+    max-width: 400px;
+    padding: 40px;
+    position: relative;
+    z-index: 5;
 }
 
-@keyframes textShine {
-    0% {
-        background-position: 0% 50%;
+.message::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 15, 45, 0.2);
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(157, 25, 255, 0.2);
+    z-index: -1;
+    border: 1px solid rgba(157, 25, 255, 0.1);
+    opacity: 0;
+    transform: scale(0.95);
+    animation: fadeInScale 1s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+.message::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(157, 25, 255, 0.1), rgba(0, 229, 255, 0.1), transparent);
+    z-index: -2;
+    border-radius: 50%;
+    animation: rotate 15s linear infinite;
+}
+
+.message i {
+    font-size: 4rem;
+    color: transparent;
+    background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-color), var(--accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    animation: float 3s ease-in-out infinite, textShine 3s ease infinite;
+    position: relative;
+}
+
+.message i::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.message p {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: white;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 0.8s cubic-bezier(.22,1,.36,1) forwards 0.3s;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* 主页动效 - 浮动动画 */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
     }
     50% {
-        background-position: 100% 50%;
+        transform: translateY(-15px);
+    }
+}
+
+/* 滑入动画 */
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
     }
     100% {
-        background-position: 0% 50%;
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-@keyframes pulse {
-    0%, 100% {
-        opacity: 0.9;
+/* 淡入缩放动画 */
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 旋转动画 */
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 视频播放器背景粒子 */
+.video-player-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.video-player-particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFade 10s linear infinite;
+}
+
+@keyframes particleFade {
+    0% {
+        opacity: 0;
+        transform: scale(0);
     }
     50% {
-        opacity: 0.7;
+        opacity: var(--particle-opacity, 0.3);
     }
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}
+
+/* 鼠标粒子动画 */
+@keyframes mouseParticleFade {
+    0% {
+        opacity: 0.5;
+        transform: scale(0.5) translate(0, 0);
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.5) translate(
+            calc(var(--end-x) - var(--left, 0px)), 
+            calc(var(--end-y) - var(--top, 0px))
+        );
+    }
+}
+
+/* 视频播放器涟漪效果 */
+.video-player-ripple {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: none;
+    animation: videoRipple 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    border: 2px solid var(--accent-tertiary);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+}
+
+@keyframes videoRipple {
+    0% {
+        width: 10px;
+        height: 10px;
+        opacity: 1;
+    }
+    100% {
+        width: 200px;
+        height: 200px;
+        opacity: 0;
+        border-width: 1px;
+    }
+}
+
+/* 添加鼠标悬停效果 */
+.message i {
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.message:hover i {
+    text-shadow: 0 0 20px var(--accent-tertiary), 0 0 40px rgba(0, 229, 255, 0.5);
+}
+
+/* 欢迎信息点击效果 */
+.message {
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.message:active {
+    transform: scale(0.98);
 }
 
 /* 课程链接按钮样式 - 更前卫但更低调 */
@@ -594,17 +917,19 @@ body.loaded {
 
 /* 波纹和加载动画 */
 .ripple {
-    position: absolute;
+    background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 70%);
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.3);
+    position: absolute;
     transform: scale(0);
-    animation: ripple 0.6s linear;
+    animation: ripple 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: none;
+    z-index: 10;
+    mix-blend-mode: overlay;
 }
 
 @keyframes ripple {
     to {
-        transform: scale(4);
+        transform: scale(3);
         opacity: 0;
     }
 }
@@ -752,10 +1077,23 @@ body.loaded .preloader {
         font-size: 0.85rem;
     }
     
+    .nav-pills {
+        margin: 0.4rem;
+        padding: 0.5rem;
+    }
+    
     .nav-pills .nav-link {
-        padding: 0.4rem 0.5rem;
-        font-size: 0.8rem;
+        padding: 0.6rem 0.3rem;
         min-width: 60px;
+    }
+    
+    .nav-pills .nav-link i {
+        font-size: 1.2rem;
+        margin-bottom: 3px;
+    }
+    
+    .nav-pills .nav-link span {
+        font-size: 0.7rem;
     }
     
     .video-player {
@@ -1151,4 +1489,31 @@ body.super-dark-theme .app-header {
 
 body.super-dark-theme #particles-js canvas {
     opacity: 0.6 !important;
+}
+
+/* 导航过渡动画 */
+body.nav-transitioning .course-container {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.course-container {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* 修改鼠标悬停的视觉反馈 */
+.nav-link:hover span {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 } 

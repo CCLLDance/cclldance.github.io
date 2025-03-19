@@ -182,6 +182,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 videoRows.forEach(r => r.classList.remove('selected'));
                 this.classList.add('selected');
                 
+                // 清除粒子效果
+                const particlesContainer = document.getElementById('videoPlayerParticles');
+                if (particlesContainer) {
+                    particlesContainer.innerHTML = '';
+                    particlesContainer.style.display = 'none';
+                }
+                
+                // 清除欢迎消息
+                const welcomeMessage = videoPlayer.querySelector('.message');
+                if (welcomeMessage) {
+                    welcomeMessage.style.display = 'none';
+                }
+                
                 // 添加自动播放参数
                 const autoplayUrl = videoUrl.includes('?') 
                     ? `${videoUrl}&autoplay=1&muted=0&playsinline=1` 
@@ -299,6 +312,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         // 高亮选中行
                         allEpisodeItems.forEach(r => r.classList.remove('selected'));
                         this.classList.add('selected');
+                        
+                        // 清除粒子效果
+                        const particlesContainer = document.getElementById('videoPlayerParticles');
+                        if (particlesContainer) {
+                            particlesContainer.innerHTML = '';
+                            particlesContainer.style.display = 'none';
+                        }
+                        
+                        // 清除欢迎消息
+                        const welcomeMessage = document.getElementById('videoPlayer').querySelector('.message');
+                        if (welcomeMessage) {
+                            welcomeMessage.style.display = 'none';
+                        }
                         
                         // 添加自动播放参数
                         const autoplayUrl = videoUrl.includes('?') 

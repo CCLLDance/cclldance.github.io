@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const targetId = this.getAttribute('data-target');
+            const colorAttr = this.getAttribute('data-color');
             
             // 保存当前滚动位置
             const currentList = document.getElementById(`${activeCategory}-list`);
@@ -101,22 +102,27 @@ document.addEventListener('DOMContentLoaded', function() {
             navLinks.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
             
+            // 添加过渡动画类
+            document.body.classList.add('nav-transitioning');
+            
             // 显示对应课程内容
             courseContainers.forEach(container => {
                 container.classList.remove('active');
                 if (container.id === targetId) {
-                    container.classList.add('active');
-                    
-                    // 记录当前活动的课程类型
-                    activeCategory = targetId;
-                    
-                    // 恢复滚动位置
-                    const targetList = document.getElementById(`${targetId}-list`);
-                    if (targetList) {
-                        setTimeout(() => {
+                    // 使用延迟来增强切换过渡效果
+                    setTimeout(() => {
+                        container.classList.add('active');
+                        document.body.classList.remove('nav-transitioning');
+                        
+                        // 记录当前活动的课程类型
+                        activeCategory = targetId;
+                        
+                        // 恢复滚动位置
+                        const targetList = document.getElementById(`${targetId}-list`);
+                        if (targetList) {
                             targetList.scrollTop = scrollPositions[targetId];
-                        }, 10);
-                    }
+                        }
+                    }, 150);
                 }
             });
 
@@ -251,38 +257,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 视频加载完成事件
                 else if (data.event === 'ready') {
-                    // 获取视频总时长
-                    postMessageToVimeo(currentVideoData.iframe, 'getDuration');
-                    
                     // 添加事件监听
                     postMessageToVimeo(currentVideoData.iframe, 'addEventListener', 'playProgress');
                     postMessageToVimeo(currentVideoData.iframe, 'addEventListener', 'pause');
                     postMessageToVimeo(currentVideoData.iframe, 'addEventListener', 'play');
                     postMessageToVimeo(currentVideoData.iframe, 'addEventListener', 'loaded');
-                    
-                    // 如果有保存的播放位置，则设置
-                    if (currentVideoData.id && videoProgressData[currentVideoData.id] && 
-                        typeof videoProgressData[currentVideoData.id].time === 'number') {
-                        
-                        const seekTime = videoProgressData[currentVideoData.id].time;
-                        
-                        // 向iframe发送seek命令
-                        postMessageToVimeo(currentVideoData.iframe, 'setCurrentTime', seekTime);
-                        
-                        // 设置自动播放
-                        setTimeout(() => {
-                            postMessageToVimeo(currentVideoData.iframe, 'play');
-                        }, 500);
-                    } else {
-                        // 直接播放
-                        setTimeout(() => {
-                            postMessageToVimeo(currentVideoData.iframe, 'play');
-                        }, 500);
-                    }
                 }
             }
         } catch (error) {
-            console.error('处理消息出错:', error);
+            console.error('处理消息失败:', error);
         }
     });
     
@@ -292,6 +275,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentIframe = videoPlayer.querySelector('iframe');
         if (currentIframe) {
             postMessageToVimeo(currentIframe, 'getCurrentTime', null);
+        }
+        
+        // 更新当前视频数据
+        currentVideoData.id = videoId;
+        currentVideoData.url = videoUrl;
+        
+        // 清除欢迎消息
+        const welcomeMessage = videoPlayer.querySelector('.message');
+        if (welcomeMessage) {
+            welcomeMessage.style.display = 'none';
         }
 
         // 高亮选中行
@@ -323,14 +316,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // 设置新iframe加载完成后的处理
         const newIframe = videoPlayer.querySelector('iframe');
         if (newIframe) {
+            // 更新当前视频的iframe引用
+            currentVideoData.iframe = newIframe;
+            
             newIframe.onload = function() {
                 this.classList.add('loaded');
                 
                 // 恢复之前保存的进度
-                const savedProgress = JSON.parse(localStorage.getItem('videoProgressData') || '{}');
-                if (savedProgress[videoId]) {
+                const savedProgress = videoProgressData[videoId];
+                if (savedProgress && typeof savedProgress.time === 'number') {
                     setTimeout(() => {
-                        postMessageToVimeo(newIframe, 'seekTo', savedProgress[videoId]);
+                        postMessageToVimeo(newIframe, 'seekTo', savedProgress.time);
                     }, 1000); // 等待1秒确保视频已加载
                 }
             };
@@ -386,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
         startBackupProgress();
 
         // 尝试恢复上一个视频
-        restorePreviousVideo();
+        setTimeout(restorePreviousVideo, 1000);
     }
     
     // 课程一级标题点击展开/折叠功能
@@ -447,9 +443,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (initialList) {
         initialList.scrollTop = scrollPositions['CHTTO'];
     }
-    
-    // 初始化视频播放功能
-    initializeVideoPlayer();
     
     // 添加触摸事件支持
     function addTouchSupport() {
@@ -534,25 +527,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // 在页面加载后初始化移动设备支持
-    window.addEventListener('load', function() {
-        initMobileSupport();
+    // 初始化课程列表动画
+    function initializeListAnimations() {
+        // 为课程标题添加点击动画
+        lessonHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.add('clicked');
+                setTimeout(() => {
+                    this.classList.remove('clicked');
+                }, 300);
+            });
+        });
         
-        // 延迟一点时间确保所有内容都已加载
+        // 为课程项添加点击动画
+        const episodeItems = document.querySelectorAll('.episode-item');
+        episodeItems.forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.add('clicked');
+                setTimeout(() => {
+                    this.classList.remove('clicked');
+                }, 300);
+            });
+        });
+    }
+    
+    // 初始化移动端支持
+    initMobileSupport();
+    
+    // 初始化粒子效果
+    initParticles();
+    
+    // 初始化视频播放器
+    initializeVideoPlayer();
+    
+    // 隐藏预加载动画
+    const preloader = document.querySelector('.preloader');
+    if (preloader) {
+        // 延迟隐藏预加载动画以确保所有内容都已加载
         setTimeout(() => {
-            document.body.classList.add('loaded');
-        }, 800);
-    });
+            preloader.classList.add('hidden');
+            setTimeout(() => {
+                preloader.style.display = 'none';
+            }, 500);
+        }, 1000);
+    }
     
-    // 页面关闭或刷新前保存当前视频播放状态
-    window.addEventListener('beforeunload', function() {
-        // 在页面关闭前保存视频进度
-        if (currentVideoData.id && currentVideoData.iframe) {
-            postMessageToVimeo(currentVideoData.iframe, 'getCurrentTime');
-        }
-    });
+    // 初始化课程列表交互效果
+    initializeListAnimations();
     
-    // 更新粒子效果配置 - 根据主题调整
+    // 初始化粒子效果
     function initParticles() {
         particlesJS('particles-js', {
             "particles": {
@@ -663,17 +686,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 初始化粒子效果
-    initParticles();
-    
-    // 主题切换时更新粒子效果
-    if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', function() {
-            // 给粒子效果一点时间过渡
-            setTimeout(() => {
-                // 重新初始化粒子效果
-                initParticles();
-            }, 300);
-        });
-    }
+    // 页面加载完成后添加loaded类
+    window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+    });
 });
