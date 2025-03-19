@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const scrollPositions = {
         'CHTTO': 0,
         'HIPHOP': 0,
-        'SOUL': 0
+        'SOUL': 0,
+        'MEE': 0
     };
     
     // 当前活动的课程类型
@@ -33,6 +34,56 @@ document.addEventListener('DOMContentLoaded', function() {
     lessonHeaders.forEach(header => {
         header.classList.add('expanded');
     });
+    
+    // 添加主题切换功能
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (themeToggleBtn) {
+        // 默认主题
+        let isDarkTheme = true; // true表示普通深色，false表示超深色
+        
+        // 检查本地存储中的主题偏好
+        const savedTheme = localStorage.getItem('ccllDanceTheme');
+        if (savedTheme === 'super-dark') {
+            isDarkTheme = false;
+            document.body.classList.add('super-dark-theme');
+            const themeIcon = themeToggleBtn.querySelector('i');
+            if (themeIcon) {
+                themeIcon.className = 'bi bi-stars';
+            }
+        }
+        
+        // 主题切换事件
+        themeToggleBtn.addEventListener('click', function() {
+            isDarkTheme = !isDarkTheme;
+            
+            // 更换图标
+            const themeIcon = this.querySelector('i');
+            if (themeIcon) {
+                if (isDarkTheme) {
+                    themeIcon.className = 'bi bi-moon-stars';
+                } else {
+                    themeIcon.className = 'bi bi-stars';
+                }
+            }
+            
+            // 切换主题类
+            if (isDarkTheme) {
+                document.body.classList.remove('super-dark-theme');
+                localStorage.setItem('ccllDanceTheme', 'dark');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#070720');
+            } else {
+                document.body.classList.add('super-dark-theme');
+                localStorage.setItem('ccllDanceTheme', 'super-dark');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#030310');
+            }
+            
+            // 添加旋转动画
+            this.classList.add('rotating');
+            setTimeout(() => {
+                this.classList.remove('rotating');
+            }, 500);
+        });
+    }
     
     // 导航点击处理
     navLinks.forEach(link => {
@@ -68,6 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
+
+            // 添加导航切换动画效果
+            addRippleEffect(e);
         });
     });
     
@@ -75,199 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const videoRows = document.querySelectorAll('.video-row');
     const videoPlayer = document.getElementById('videoPlayer');
     
-    // 显示调试面板和调试信息
-    const debugMode = true; // 设置为true开启调试
-    
-    // 创建调试面板
-    if (debugMode) {
-        // 创建调试面板容器
-        const debugPanel = document.createElement('div');
-        debugPanel.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            width: 400px;
-            background-color: rgba(0,0,0,0.85);
-            color: #00ff00;
-            padding: 15px;
-            border-radius: 5px;
-            z-index: 9999999;
-            max-height: 300px;
-            overflow-y: auto;
-            font-size: 14px;
-            font-family: monospace;
-            white-space: pre;
-            border: 2px solid #00ff00;
-            display: block !important;
-            pointer-events: auto;
-        `;
-        debugPanel.id = 'debug-panel';
-        
-        // 创建标题
-        const title = document.createElement('div');
-        title.style.cssText = `
-            border-bottom: 1px solid #00ff00;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            font-size: 16px;
-            font-weight: bold;
-        `;
-        title.innerText = '视频播放调试信息 (DEBUG PANEL)';
-        debugPanel.appendChild(title);
-        
-        // 创建内容区域
-        const content = document.createElement('div');
-        content.id = 'debug-content';
-        content.style.cssText = `
-            margin-bottom: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-        `;
-        debugPanel.appendChild(content);
-        
-        // 创建按钮容器
-        const buttonContainer = document.createElement('div');
-        buttonContainer.style.cssText = `
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        `;
-        
-        // 创建按钮样式
-        const buttonStyle = `
-            padding: 5px 10px;
-            background: #333;
-            color: #fff;
-            border: 1px solid #00ff00;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        `;
-        
-        // 清除按钮
-        const clearBtn = document.createElement('button');
-        clearBtn.style.cssText = buttonStyle;
-        clearBtn.innerText = '清除存储';
-        clearBtn.onclick = function() {
-            localStorage.removeItem('videoProgressData');
-            localStorage.removeItem('lastVideoId');
-            logDebug('已清除所有存储的视频进度数据');
-        };
-        
-        // 显示存储按钮
-        const showBtn = document.createElement('button');
-        showBtn.style.cssText = buttonStyle;
-        showBtn.innerText = '显示存储';
-        showBtn.onclick = function() {
-            const data = JSON.parse(localStorage.getItem('videoProgressData') || '{}');
-            const lastId = localStorage.getItem('lastVideoId') || 'none';
-            logDebug(`最后播放视频: ${lastId}\n存储数据: ${JSON.stringify(data, null, 2)}`);
-        };
-        
-        // 调试数据按钮
-        const initialDataBtn = document.createElement('button');
-        initialDataBtn.style.cssText = buttonStyle;
-        initialDataBtn.innerText = '调试数据';
-        initialDataBtn.onclick = function() {
-            const data = JSON.parse(localStorage.getItem('videoProgressData') || '{}');
-            const lastId = localStorage.getItem('lastVideoId') || 'none';
-            const storageInfo = `最后播放视频: ${lastId}\n存储数据: ${JSON.stringify(data, null, 2)}`;
-            
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: rgba(0,0,0,0.9);
-                color: #00ff00;
-                padding: 20px;
-                border-radius: 5px;
-                z-index: 1000000;
-                max-width: 80%;
-                max-height: 80%;
-                overflow-y: auto;
-                border: 2px solid #00ff00;
-            `;
-            
-            const closeBtn = document.createElement('button');
-            closeBtn.style.cssText = `
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                padding: 5px 10px;
-                background: #333;
-                color: #fff;
-                border: 1px solid #00ff00;
-                border-radius: 4px;
-                cursor: pointer;
-            `;
-            closeBtn.innerText = '关闭';
-            closeBtn.onclick = function() {
-                document.body.removeChild(modal);
-            };
-            
-            const content = document.createElement('pre');
-            content.style.cssText = `
-                margin: 20px 0;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-            `;
-            content.innerText = storageInfo;
-            
-            modal.appendChild(closeBtn);
-            modal.appendChild(content);
-            document.body.appendChild(modal);
-        };
-        
-        buttonContainer.appendChild(clearBtn);
-        buttonContainer.appendChild(showBtn);
-        buttonContainer.appendChild(initialDataBtn);
-        debugPanel.appendChild(buttonContainer);
-        
-        // 添加到页面
-        document.body.appendChild(debugPanel);
-        
-        // 立即显示初始调试信息
-        logDebug('调试面板已初始化');
-        
-        // 显示当前存储的数据
-        const data = JSON.parse(localStorage.getItem('videoProgressData') || '{}');
-        const lastId = localStorage.getItem('lastVideoId') || 'none';
-        logDebug(`当前存储数据:\n最后播放视频: ${lastId}\n存储数据: ${JSON.stringify(data, null, 2)}`);
-    }
-    
-    // 调试日志函数
-    function logDebug(message) {
-        if (!debugMode) return;
-        
-        console.log(`[视频调试] ${message}`);
-        
-        const debugContent = document.getElementById('debug-content');
-        if (debugContent) {
-            const timestamp = new Date().toLocaleTimeString();
-            const logEntry = document.createElement('div');
-            logEntry.style.cssText = `
-                margin-bottom: 5px;
-                padding: 3px;
-                border-bottom: 1px solid rgba(0,255,0,0.2);
-            `;
-            logEntry.innerText = `[${timestamp}] ${message}`;
-            
-            // 在开头插入新日志
-            debugContent.insertBefore(logEntry, debugContent.firstChild);
-            
-            // 保持日志不超过10条
-            while (debugContent.children.length > 10) {
-                debugContent.removeChild(debugContent.lastChild);
-            }
-        }
-    }
-    
     // 从localStorage获取保存的视频播放进度数据
     let videoProgressData = JSON.parse(localStorage.getItem('videoProgressData') || '{}');
-    logDebug(`加载存储的视频数据: ${JSON.stringify(videoProgressData, null, 2)}`);
     
     // 当前播放的视频信息
     let currentVideoData = {
@@ -284,7 +147,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 使用postMessage与iframe进行通信
     function postMessageToVimeo(iframe, action, value) {
         if (!iframe || !iframe.contentWindow) {
-            logDebug(`postMessage失败: iframe不存在或无法访问`);
             return;
         }
         
@@ -297,12 +159,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const message = JSON.stringify(data);
-        logDebug(`发送到Vimeo: ${message}`);
         
         try {
             iframe.contentWindow.postMessage(message, '*');
         } catch (error) {
-            logDebug(`postMessage发送失败: ${error.message}`);
+            console.error('postMessage发送失败:', error);
         }
     }
     
@@ -312,16 +173,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (saveIntervalId) {
             clearInterval(saveIntervalId);
             saveIntervalId = null;
-            logDebug('清除了之前的视频时间监控');
         }
         
         // 如果当前没有视频，则直接返回
         if (!currentVideoData.iframe || !currentVideoData.id) {
-            logDebug('没有当前视频，无法设置监控');
             return;
         }
-        
-        logDebug(`开始监控视频 ${currentVideoData.id} 的播放时间`);
         
         // 定期请求当前播放位置并保存
         saveIntervalId = setInterval(() => {
@@ -332,7 +189,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 保存视频进度
     function saveVideoProgress(videoId, seconds) {
         if (!videoId || typeof seconds !== 'number') {
-            logDebug(`无法保存进度: videoId=${videoId}, seconds=${seconds}`);
             return;
         }
         
@@ -347,10 +203,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // 存入localStorage
             localStorage.setItem('videoProgressData', JSON.stringify(videoProgressData));
             localStorage.setItem('lastVideoId', videoId);
-            
-            logDebug(`保存视频进度: ${videoId} 在 ${seconds.toFixed(2)} 秒`);
         } catch (error) {
-            logDebug(`保存进度失败: ${error.message}`);
+            console.error('保存进度失败:', error);
         }
     }
     
@@ -371,10 +225,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 data = event.data;
             }
             
-            // 记录所有接收到的消息，方便调试
-            console.log('收到消息:', event.origin, data);
-            logDebug(`收到消息: ${event.origin}, 数据: ${JSON.stringify(data)}`);
-            
             // 处理各种消息类型
             if (data) {
                 // 处理获取当前时间的响应
@@ -390,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 处理视频暂停事件
                 else if (data.event === 'pause') {
                     currentVideoData.isPlaying = false;
-                    logDebug('视频已暂停');
                     // 暂停时也保存一次进度
                     postMessageToVimeo(currentVideoData.iframe, 'getCurrentTime');
                 }
@@ -398,13 +247,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 处理视频播放事件
                 else if (data.event === 'play') {
                     currentVideoData.isPlaying = true;
-                    logDebug('视频开始播放');
                 }
                 
                 // 视频加载完成事件
                 else if (data.event === 'ready') {
-                    logDebug('视频准备就绪');
-                    
                     // 获取视频总时长
                     postMessageToVimeo(currentVideoData.iframe, 'getDuration');
                     
@@ -419,7 +265,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         typeof videoProgressData[currentVideoData.id].time === 'number') {
                         
                         const seekTime = videoProgressData[currentVideoData.id].time;
-                        logDebug(`恢复到保存的时间点: ${seekTime.toFixed(2)}秒`);
                         
                         // 向iframe发送seek命令
                         postMessageToVimeo(currentVideoData.iframe, 'setCurrentTime', seekTime);
@@ -429,7 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             postMessageToVimeo(currentVideoData.iframe, 'play');
                         }, 500);
                     } else {
-                        logDebug(`没有找到视频 ${currentVideoData.id} 的保存进度`);
                         // 直接播放
                         setTimeout(() => {
                             postMessageToVimeo(currentVideoData.iframe, 'play');
@@ -438,7 +282,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } catch (error) {
-            logDebug(`处理消息出错: ${error.message}`);
             console.error('处理消息出错:', error);
         }
     });
@@ -488,7 +331,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (savedProgress[videoId]) {
                     setTimeout(() => {
                         postMessageToVimeo(newIframe, 'seekTo', savedProgress[videoId]);
-                        logDebug(`恢复视频 ${videoId} 的进度: ${savedProgress[videoId]}秒`);
                     }, 1000); // 等待1秒确保视频已加载
                 }
             };
@@ -567,32 +409,37 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 添加波纹点击效果
-    function createRipple(event) {
-        const button = event.currentTarget;
+    function addRippleEffect(event) {
+        const target = event.currentTarget;
+        const ripple = document.createElement('span');
+        const rect = target.getBoundingClientRect();
         
-        const circle = document.createElement('span');
-        const diameter = Math.max(button.clientWidth, button.clientHeight);
-        const radius = diameter / 2;
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
         
-        const rect = button.getBoundingClientRect();
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.classList.add('ripple');
         
-        circle.style.width = circle.style.height = `${diameter}px`;
-        circle.style.left = `${event.clientX - rect.left - radius}px`;
-        circle.style.top = `${event.clientY - rect.top - radius}px`;
-        circle.classList.add('ripple');
-        
-        const ripple = button.getElementsByClassName('ripple')[0];
-        
-        if (ripple) {
-            ripple.remove();
+        // 移除已有波纹
+        const existingRipple = target.querySelector('.ripple');
+        if (existingRipple) {
+            existingRipple.remove();
         }
         
-        button.appendChild(circle);
+        target.appendChild(ripple);
+        
+        // 动画结束后移除
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
     }
     
-    const buttons = document.querySelectorAll('.nav-link, .lesson-header, .episode-item');
-    buttons.forEach(button => {
-        button.addEventListener('click', createRipple);
+    // 为可点击元素添加波纹效果
+    document.querySelectorAll('.nav-link, .lesson-header, .episode-item, #themeToggleBtn').forEach(el => {
+        el.addEventListener('click', addRippleEffect);
     });
     
     // 页面加载时恢复记忆的滚动位置
@@ -678,17 +525,132 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('beforeunload', function() {
         // 在页面关闭前保存视频进度
         if (currentVideoData.id && currentVideoData.iframe) {
-            logDebug('页面关闭前保存视频进度');
             postMessageToVimeo(currentVideoData.iframe, 'getCurrentTime');
         }
     });
-}); 
-
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('courses.json')
-        .then(response => response.json())
-        .then(courseData => {
-            generateCourseHTML(courseData);
-        })
-        .catch(error => console.error('Error loading course data:', error));
+    
+    // 更新粒子效果配置 - 根据主题调整
+    function initParticles() {
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": document.body.classList.contains('super-dark-theme') 
+                        ? ["#6200b3", "#ca0046", "#0099cc", "#006633"]
+                        : ["#9d19ff", "#ff2a6a", "#00e5ff", "#00ff8f"]
+                },
+                "shape": {
+                    "type": ["circle", "triangle", "polygon"],
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 6
+                    }
+                },
+                "opacity": {
+                    "value": document.body.classList.contains('super-dark-theme') ? 0.15 : 0.2,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 0.5,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "size_min": 0.5,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": document.body.classList.contains('super-dark-theme') ? "#6200b3" : "#9d19ff",
+                    "opacity": document.body.classList.contains('super-dark-theme') ? 0.12 : 0.15,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.2,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": true,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "bubble"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 0.4
+                        }
+                    },
+                    "bubble": {
+                        "distance": 150,
+                        "size": 4,
+                        "duration": 2,
+                        "opacity": 0.7,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 80,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    }
+    
+    // 初始化粒子效果
+    initParticles();
+    
+    // 主题切换时更新粒子效果
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', function() {
+            // 给粒子效果一点时间过渡
+            setTimeout(() => {
+                // 重新初始化粒子效果
+                initParticles();
+            }, 300);
+        });
+    }
 });

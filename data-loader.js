@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const courseData = {
         CHTTO: [],
         HIPHOP: [],
-        SOUL: []
+        SOUL: [],
+        MEE: []
     };
 
     // 定义要加载的JSON文件路径
@@ -23,6 +24,10 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         SOUL: [
             'data/soul-courses.json'
+        ],
+        MEE: [
+            'data/mee-courses-1.json',
+            'data/mee-courses-2.json'
         ]
     };
 
@@ -58,16 +63,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 courseData.SOUL = courseData.SOUL.concat(data);
             }
+            
+            // 加载MEE课程数据
+            for (const file of jsonFiles.MEE) {
+                const response = await fetch(file);
+                if (!response.ok) {
+                    throw new Error(`加载文件 ${file} 失败: ${response.status}`);
+                }
+                const data = await response.json();
+                courseData.MEE = courseData.MEE.concat(data);
+            }
 
             // 按课程顺序排序
             courseData.CHTTO.sort((a, b) => a.lessonNumber - b.lessonNumber);
             courseData.HIPHOP.sort((a, b) => a.lessonNumber - b.lessonNumber);
             courseData.SOUL.sort((a, b) => a.lessonNumber - b.lessonNumber);
+            courseData.MEE.sort((a, b) => a.lessonNumber - b.lessonNumber);
 
             // 生成课程列表
             generateCourseLists();
+            
+            // 返回成功结果
+            return Promise.resolve();
         } catch (error) {
             console.error('加载数据失败:', error);
+            return Promise.reject(error);
         }
     }
 
@@ -81,6 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 生成SOUL课程列表
         generateCourseList('SOUL', courseData.SOUL);
+        
+        // 生成MEE课程列表
+        generateCourseList('MEE', courseData.MEE);
 
         // 初始化视频点击事件
         initVideoClickEvents();
@@ -259,14 +282,97 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // 添加视频点击后的动态更新
+    function handleDynamicUpdates() {
+        // 在视频处理完成后，重新检查是否有新的课程项需要绑定事件
+        const allEpisodeItems = document.querySelectorAll('.episode-item');
+        allEpisodeItems.forEach(item => {
+            if (!item.hasAttribute('data-event-bound')) {
+                item.setAttribute('data-event-bound', 'true');
+                
+                // 添加点击事件
+                item.addEventListener('click', function() {
+                    const videoUrl = this.getAttribute('data-video-url');
+                    const courseLink = this.getAttribute('data-course-link');
+                    
+                    if (videoUrl) {
+                        // 高亮选中行
+                        allEpisodeItems.forEach(r => r.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        // 添加自动播放参数
+                        const autoplayUrl = videoUrl.includes('?') 
+                            ? `${videoUrl}&autoplay=1&muted=0` 
+                            : `${videoUrl}?autoplay=1&muted=0`;
+                        
+                        // 更新视频播放器
+                        const videoPlayer = document.getElementById('videoPlayer');
+                        videoPlayer.innerHTML = `<iframe src="${autoplayUrl}" allowfullscreen allow="autoplay"></iframe>`;
+                        
+                        // 添加加载动画
+                        const iframe = videoPlayer.querySelector('iframe');
+                        if (iframe) {
+                            iframe.onload = function() {
+                                this.classList.add('loaded');
+                            };
+                        }
+                        
+                        // 更新课程链接按钮
+                        const courseLinkBtn = document.getElementById('courseLinkBtn');
+                        if (courseLink && courseLinkBtn) {
+                            courseLinkBtn.href = courseLink;
+                            courseLinkBtn.style.display = 'block';
+                            
+                            // 添加显示动画
+                            setTimeout(() => {
+                                courseLinkBtn.classList.add('show');
+                            }, 100);
+                        }
+                    }
+                });
+                
+                // 添加波纹效果
+                item.addEventListener('click', createRipple);
+            }
+        });
+    }
+
     // 启动加载
-    loadAllData();
+    loadAllData().then(() => {
+        // 数据加载完成后，确保所有事件绑定正确
+        setTimeout(() => {
+            handleDynamicUpdates();
+            
+            // 确保MEE类别的视频点击也被绑定
+            const meeItems = document.querySelectorAll('#MEE-list .episode-item');
+            console.log('MEE视频数量:', meeItems.length);
+            
+            // 重新初始化所有课程展开/折叠功能
+            document.querySelectorAll('.lesson-header').forEach(header => {
+                if (!header.hasAttribute('data-event-bound')) {
+                    header.setAttribute('data-event-bound', 'true');
+                    header.addEventListener('click', function() {
+                        const episodeList = this.nextElementSibling;
+                        if (episodeList) {
+                            if (episodeList.classList.contains('show')) {
+                                episodeList.classList.remove('show');
+                                this.classList.remove('expanded');
+                            } else {
+                                episodeList.classList.add('show');
+                                this.classList.add('expanded');
+                            }
+                        }
+                    });
+                }
+            });
+        }, 500);
+    });
 
     // 添加类别切换处理
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(navLink => {
         navLink.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-bs-target');
+            const tabId = this.getAttribute('data-target');
             if (!tabId) return;
             
             // 更新导航样式
@@ -283,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // 显示目标容器
-            const targetContainer = document.querySelector(tabId);
+            const targetContainer = document.getElementById(tabId);
             if (targetContainer) {
                 targetContainer.classList.add('active');
             }
