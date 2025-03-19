@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#070720">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>CCLLDance | 贪吃蛇游戏</title>
+    
+    <!-- 字体和样式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&display=swap">
+    <link rel="stylesheet" href="css/snake.css">
+</head>
+<body>
+    <div class="snake-game-container">
+        <!-- 游戏画布 -->
+        <canvas id="snakeCanvas" class="snake-game-canvas"></canvas>
+        
+        <!-- 游戏UI层 -->
+        <div class="snake-game-ui">
+            <!-- 控制按钮 -->
+            <div class="snake-game-controls">
+                <button id="muteBtn" class="snake-game-btn">
+                    <i class="bi bi-volume-up-fill"></i>
+                </button>
+                <button id="pauseBtn" class="snake-game-btn">
+                    <i class="bi bi-pause-fill"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 开始屏幕 -->
+        <div id="startScreen" class="snake-game-start-screen">
+            <h1 class="snake-game-title">贪吃蛇游戏</h1>
+            <button id="startBtn" class="snake-game-start-btn">开始游戏</button>
+            <div class="snake-game-instructions">
+                <span>使用 <span class="snake-game-key">↑</span> <span class="snake-game-key">↓</span> <span class="snake-game-key">←</span> <span class="snake-game-key">→</span> 或 <span class="snake-game-key">W</span> <span class="snake-game-key">S</span> <span class="snake-game-key">A</span> <span class="snake-game-key">D</span> 控制蛇的方向</span>
+                <span>在移动设备上可以使用滑动手势控制</span>
+                <span>按 <span class="snake-game-key">空格</span> 键重新开始游戏</span>
+                <span>按 <span class="snake-game-key">P</span> 键暂停游戏</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 脚本 -->
+    <script type="module">
+        import SnakeGame from './js/game.js';
+        
+        // 当DOM加载完成后初始化游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取DOM元素
+            const canvas = document.getElementById('snakeCanvas');
+            const startScreen = document.getElementById('startScreen');
+            const startBtn = document.getElementById('startBtn');
+            const muteBtn = document.getElementById('muteBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            
+            // 创建游戏实例
+            const game = new SnakeGame('snakeCanvas', {
+                // 游戏配置
+                gridSize: 20,
+                initialSpeed: 150,
+                speedIncrement: 2,
+                initialSnakeLength: 3,
+                enableAudio: true,
+                audioVolume: 0.5,
+                enableTouch: true,
+                enableSwipe: true,
+                
+                // 事件回调
+                onGameStart: () => {
+                    startScreen.classList.add('hidden');
+                    pauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i>';
+                },
+                onGameOver: (score, highScore) => {
+                    // 游戏结束后显示开始屏幕
+                    setTimeout(() => {
+                        startScreen.classList.remove('hidden');
+                    }, 1500);
+                }
+            });
+            
+            // 调整画布大小以适应窗口
+            const resizeCanvas = () => {
+                game.resize();
+            };
+            
+            // 绑定窗口大小改变事件
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 初始调整
+            resizeCanvas();
+            
+            // 绑定开始按钮点击事件
+            startBtn.addEventListener('click', () => {
+                game.start();
+            });
+            
+            // 绑定静音按钮点击事件
+            muteBtn.addEventListener('click', () => {
+                const muted = game.toggleAudio();
+                muteBtn.innerHTML = muted 
+                    ? '<i class="bi bi-volume-mute-fill"></i>' 
+                    : '<i class="bi bi-volume-up-fill"></i>';
+            });
+            
+            // 绑定暂停按钮点击事件
+            pauseBtn.addEventListener('click', () => {
+                game.togglePause();
+                pauseBtn.innerHTML = pauseBtn.innerHTML.includes('pause') 
+                    ? '<i class="bi bi-play-fill"></i>' 
+                    : '<i class="bi bi-pause-fill"></i>';
+            });
+            
+            // 预创建音频文件
+            const audioFiles = [
+                { name: 'background.mp3', path: './audio/background.mp3' },
+                { name: 'eat.mp3', path: './audio/eat.mp3' },
+                { name: 'gameOver.mp3', path: './audio/gameOver.mp3' },
+                { name: 'move.mp3', path: './audio/move.mp3' }
+            ];
+            
+            // 创建空的音频文件（占位符）
+            audioFiles.forEach(file => {
+                fetch(file.path)
+                    .catch(() => {
+                        console.log(`音频文件未找到: ${file.name}，这是预期的，稍后会添加`);
+                    });
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&display=swap">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="game/css/snake.css">
 </head>
 <body>
     <!-- 预加载动画 -->
@@ -120,9 +121,34 @@
             <!-- 视频播放器区域 -->
             <div class="video-player" id="videoPlayer">
                 <!-- 视频模式消息 -->
-                <div class="video-message message">
+                <div class="video-message message" id="videoMessage">
                     <i class="bi bi-play-circle"></i>
                     <p>选择课程视频开始播放</p>
+                </div>
+                
+                <!-- 贪吃蛇游戏容器 -->
+                <div class="snake-game-container" id="snakeGameContainer">
+                    <!-- 游戏画布 -->
+                    <canvas id="snakeCanvas" class="snake-game-canvas"></canvas>
+                    
+                    <!-- 游戏UI层 -->
+                    <div class="snake-game-ui">
+                        <!-- 控制按钮 -->
+                        <div class="snake-game-controls">
+                            <button id="muteBtn" class="snake-game-btn">
+                                <i class="bi bi-volume-up-fill"></i>
+                            </button>
+                            <button id="pauseBtn" class="snake-game-btn">
+                                <i class="bi bi-pause-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 开始屏幕 -->
+                    <div id="startScreen" class="snake-game-start-screen">
+                        <h1 class="snake-game-title">SNAKE GAME</h1>
+                        <button id="startBtn" class="snake-game-start-btn" onclick="window.startSnakeGame()">START GAME</button>
+                    </div>
                 </div>
             </div>
             
@@ -138,5 +164,6 @@
     <script src="data-loader.js"></script>
     <script src="script.js"></script>
     <script src="animations.js"></script>
+    <script type="module" src="game/js/main.js"></script>
 </body>
 </html> 
