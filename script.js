@@ -5,6 +5,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const courseLinkBtn = document.getElementById('courseLinkBtn');
     const videoPlayer = document.getElementById('videoPlayer');
     
+    // 添加刷新句号点击事件 - 更新为页面右上角的按钮
+    const refreshDot = document.querySelector('.refresh-dot');
+    if (refreshDot) {
+        refreshDot.addEventListener('click', function(e) {
+            e.preventDefault();
+            // 添加旋转动画效果
+            document.body.classList.add('page-refreshing');
+            // 短暂延迟后刷新页面
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
+        });
+    }
+    
+    // 添加烟雾效果刷新按钮点击事件 - 改为回到主页
+    const smokeWrapper = document.querySelector('.smoke-wrapper');
+    if (smokeWrapper) {
+        smokeWrapper.addEventListener('click', function(e) {
+            e.preventDefault();
+            // 添加旋转动画效果
+            document.body.classList.add('page-refreshing');
+            // 增强烟雾效果
+            this.querySelectorAll('.smoke-particle').forEach(particle => {
+                particle.style.animationDuration = '0.5s';
+                particle.style.opacity = '0.9';
+                particle.style.filter = 'blur(4px)';
+                // 点击时变为紫色
+                if (particle.className.includes('p1') || 
+                    particle.className.includes('p3') || 
+                    particle.className.includes('p5') ||
+                    particle.className.includes('p7')) {
+                    particle.style.background = 'linear-gradient(135deg, #9d19ff 0%, rgba(157, 25, 255, 0) 70%)';
+                } else {
+                    particle.style.background = 'linear-gradient(225deg, #9d19ff 0%, rgba(157, 25, 255, 0) 70%)';
+                }
+            });
+            // 短暂延迟后跳转到首页
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 600);
+        });
+    }
+    
     // 初始化游戏iframe
     function initGameFrame() {
         if (videoPlayer) {

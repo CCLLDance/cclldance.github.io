@@ -1516,4 +1516,21 @@ body.nav-transitioning .course-container {
     100% {
         transform: scale(1);
     }
+}
+
+.smoke-wrapper {
+    width: 60px;  /* 调整整体宽度 */
+    height: 60px; /* 调整整体高度 */
+}
+
+.smoke-particle.p1 {
+    width: 5px;  /* 调整粒子宽度 */
+    height: 5px; /* 调整粒子高度 */
+}
+
+/* 其他粒子同理 (p2-p8) */
+
+.page-refresh-button {
+    top: 0px;    /* 距离页面顶部的距离 */
+    right: 0px;  /* 距离页面右侧的距离 */
 } 
