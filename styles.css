@@ -499,4 +499,144 @@ body.loaded .preloader {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+    .container-fluid {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: 50vh;
+        min-height: 350px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .content {
+        height: 50vh;
+    }
+    
+    .course-list {
+        padding: 0.3rem;
+    }
+    
+    .lesson-item {
+        margin-bottom: 8px;
+    }
+    
+    .lesson-header {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .episode-item {
+        padding: 8px 10px 8px 15px;
+        font-size: 0.85rem;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.8rem;
+        min-width: 60px;
+    }
+    
+    .video-player {
+        position: relative;
+    }
+    
+    .course-link-btn {
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        border-radius: 10px;
+    }
+    
+    /* 增强移动设备上的触摸区域 */
+    .nav-pills .nav-link,
+    .lesson-header,
+    .episode-item {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .lesson-header,
+    .episode-item {
+        min-height: 44px; /* 确保触摸区域足够大 */
+    }
+    
+    /* 使用active状态而不是hover状态 */
+    .nav-pills .nav-link:active,
+    .lesson-header:active,
+    .episode-item:active {
+        background-color: var(--hover-color);
+    }
+    
+    .episode-item:active:before {
+        width: 5px;
+    }
+    
+    /* 移动设备上的滚动优化 */
+    .course-list {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+}
+
+/* 小屏幕手机适配 */
+@media (max-width: 480px) {
+    .sidebar {
+        height: 45vh;
+        min-height: 300px;
+    }
+    
+    .content {
+        height: 55vh;
+    }
+    
+    .lesson-header {
+        font-size: 0.85rem;
+    }
+    
+    .episode-item {
+        padding: 6px 8px 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .nav-pills {
+        padding: 0.6rem 0.3rem;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 0.3rem 0.3rem;
+        font-size: 0.75rem;
+        min-width: 50px;
+        letter-spacing: 0;
+    }
+    
+    .message {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+}
+
+/* 横屏模式适配 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .sidebar {
+        width: 40%;
+        height: 100vh;
+        border-right: 1px solid var(--border-color);
+        border-bottom: 0;
+    }
+    
+    .content {
+        width: 60%;
+        height: 100vh;
+    }
+    
+    .container-fluid {
+        flex-direction: row;
+    }
 } 

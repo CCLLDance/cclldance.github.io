@@ -4,6 +4,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const courseContainers = document.querySelectorAll('.course-container');
     const courseLinkBtn = document.getElementById('courseLinkBtn');
     
+    // 移动设备检测
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // 根据设备类型应用不同样式
+    if (isMobile) {
+        document.body.classList.add('mobile-device');
+    }
+    
     // 存储每个列表的滚动位置
     const scrollPositions = {
         'CHTTO': 0,
@@ -596,8 +604,70 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化视频播放功能
     initializeVideoPlayer();
     
-    // 添加页面加载动画
+    // 添加触摸事件支持
+    function addTouchSupport() {
+        // 为课程标题添加触摸事件
+        const lessonHeaders = document.querySelectorAll('.lesson-header');
+        lessonHeaders.forEach(header => {
+            header.addEventListener('touchstart', function(e) {
+                // 阻止默认行为，防止滚动
+                e.preventDefault();
+                this.click();
+            }, { passive: false });
+        });
+        
+        // 为视频项添加触摸事件
+        const episodeItems = document.querySelectorAll('.episode-item');
+        episodeItems.forEach(item => {
+            item.addEventListener('touchstart', function(e) {
+                // 阻止默认行为，防止滚动
+                e.preventDefault();
+                this.click();
+            }, { passive: false });
+        });
+        
+        // 为导航链接添加触摸事件
+        navLinks.forEach(link => {
+            link.addEventListener('touchstart', function(e) {
+                // 阻止默认行为，防止滚动
+                e.preventDefault();
+                this.click();
+            }, { passive: false });
+        });
+    }
+    
+    // 调整移动设备上的视频播放器大小
+    function adjustVideoPlayerForMobile() {
+        if (isMobile) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const resizeVideoPlayer = () => {
+                // 横屏模式下调整视频大小
+                if (window.innerWidth > window.innerHeight) {
+                    videoPlayer.style.height = '100%';
+                } else {
+                    videoPlayer.style.height = '50vh';
+                }
+            };
+            
+            // 初始调整和屏幕旋转时调整
+            resizeVideoPlayer();
+            window.addEventListener('resize', resizeVideoPlayer);
+            window.addEventListener('orientationchange', resizeVideoPlayer);
+        }
+    }
+    
+    // 初始化移动设备支持
+    function initMobileSupport() {
+        if (isMobile) {
+            addTouchSupport();
+            adjustVideoPlayerForMobile();
+        }
+    }
+    
+    // 在页面加载后初始化移动设备支持
     window.addEventListener('load', function() {
+        initMobileSupport();
+        
         // 延迟一点时间确保所有内容都已加载
         setTimeout(() => {
             document.body.classList.add('loaded');
