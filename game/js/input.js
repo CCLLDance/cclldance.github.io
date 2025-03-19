@@ -47,6 +47,12 @@ class InputController {
     }
     
     handleKeydown(event) {
+        // 检查焦点是否在输入框上，如果是则不响应游戏控制
+        const focusedElement = document.activeElement;
+        if (focusedElement && (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA')) {
+            return; // 不处理键盘事件
+        }
+        
         switch(event.key) {
             case 'ArrowUp':
             case 'w':

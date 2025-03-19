@@ -8,7 +8,7 @@ class AudioController {
             enabled: true,
             volume: 0.5,
             muted: false,
-            audioPath: '../game/audio/'
+            audioPath: './audio/'
         }, options);
         
         this.sounds = {
@@ -24,44 +24,67 @@ class AudioController {
     init() {
         // 初始化所有音频元素，但不加载
         if (this.options.enabled) {
-            for (const soundName in this.sounds) {
-                this.createAudio(soundName);
+            try {
+                for (const soundName in this.sounds) {
+                    this.createAudio(soundName);
+                }
+                console.log('音频系统初始化完成');
+            } catch (error) {
+                console.error('音频初始化失败，禁用音频:', error);
+                this.options.enabled = false;
             }
         }
     }
     
     createAudio(name) {
-        // 创建音频元素
-        const audio = new Audio();
-        audio.volume = this.options.volume;
-        audio.muted = this.options.muted;
-        
-        // 设置音频源
-        // 注意：这些是占位符，实际的音频文件需要稍后添加
-        const filePath = `${this.options.audioPath}${name}.mp3`;
-        
-        // 添加错误处理
-        audio.addEventListener('error', (e) => {
-            // 静默失败，不影响游戏运行
-            console.log(`音频加载失败: ${name} - 文件可能不存在`);
-        });
-        
-        // 尝试设置音频源（即使文件不存在也不会崩溃）
         try {
+            // 创建音频元素
+            const audio = new Audio();
+            audio.volume = this.options.volume;
+            audio.muted = this.options.muted;
+            
+            // 设置音频源
+            const filePath = `${this.options.audioPath}${name}.mp3`;
+            
+            // 添加错误处理
+            audio.addEventListener('error', (e) => {
+                console.warn(`音频加载失败: ${name} - 文件可能不存在或格式不正确`, e.target.error);
+            });
+            
+            // 添加加载完成事件
+            audio.addEventListener('canplaythrough', () => {
+                console.log(`音频加载成功: ${name}`);
+            });
+            
+            // 尝试设置音频源
             audio.src = filePath;
             audio.load();
+            
+            this.sounds[name] = audio;
         } catch (e) {
-            console.log(`设置音频源失败: ${name}`);
+            console.error(`创建音频失败: ${name}`, e);
+            // 创建一个空的Audio对象作为回退
+            this.sounds[name] = { 
+                play: () => {}, 
+                pause: () => {},
+                addEventListener: () => {} 
+            };
         }
-        
-        this.sounds[name] = audio;
     }
     
     playSound(name, options = {}) {
         if (!this.options.enabled || this.options.muted) return;
         
         const sound = this.sounds[name];
-        if (!sound) return;
+        if (!sound || !sound.src) return;
+        
+        // 检查音频是否已准备就绪
+        if (sound.readyState === 0) {
+            console.log(`音频文件未加载: ${name}`);
+            // 尝试重新加载
+            sound.load();
+            return;
+        }
         
         // 应用选项
         if (options.volume !== undefined) {

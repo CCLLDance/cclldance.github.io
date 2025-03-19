@@ -52,39 +52,18 @@
             flex-direction: column;
             border-right: 1px solid rgba(157, 25, 255, 0.5);
             box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
             transition: all 0.3s ease;
             position: relative;
-            height: 100vh;
+            height: 100%;
             box-sizing: border-box;
-        }
-        
-        /* 内容卡片样式调整，确保其填充可用空间 */
-        .content-card {
-            background-color: #0d0b2a;
-            border-radius: 12px;
-            box-shadow: 0 0 0 2px rgba(157, 25, 255, 0.5), 
-                        0 0 30px rgba(157, 25, 255, 0.3), 
-                        0 0 10px rgba(255, 42, 106, 0.4);
-            border: 1px solid rgba(255, 42, 106, 0.5);
-            transition: all 0.3s ease;
-            padding: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            overflow: hidden; /* 防止内容溢出 */
-            height: calc(100vh - 30px); /* 减去padding */
         }
         
         .leaderboard-card-container {
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-            flex: 1;
+            overflow-y: visible;
             padding-right: 5px;
-            margin-bottom: 5px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(157, 25, 255, 0.5) rgba(25, 25, 60, 0.3);
         }
         
         .leaderboard-card {
@@ -180,11 +159,10 @@
             transition: all 0.3s ease;
             padding: 15px;
             margin-bottom: 20px;
+            height: auto;
             display: flex;
             flex-direction: column;
             flex: 1;
-            overflow: hidden; /* 防止内容溢出 */
-            height: calc(100vh - 30px); /* 减去padding */
         }
         
         .content-card:hover {
@@ -461,7 +439,6 @@
             .content-card {
                 margin-bottom: 10px;
                 padding: 10px;
-                height: calc(35vh - 20px); /* 移动端高度调整 */
             }
             
             /* 游戏容器确保居中且大小合适 */
@@ -478,9 +455,9 @@
             
             /* 排行榜卡片横向排列前三名 */
             .leaderboard-card-container {
+                display: flex;
                 flex-wrap: wrap;
                 gap: 8px;
-                max-height: none;
             }
             
             .leaderboard-card-container > div:nth-child(-n+3) {
@@ -493,21 +470,75 @@
                 margin-bottom: 8px;
             }
             
-            /* 分页控件调整 */
+            /* 标题和按钮调整 */
+            .leaderboard-title, .game-title {
+                font-size: 0.9rem;
+                margin-bottom: 10px;
+            }
+            
+            .game-score {
+                top: 10px;
+                left: 10px;
+                padding: 5px 10px;
+                font-size: 0.7rem;
+            }
+            
+            .start-btn {
+                font-size: 0.7rem;
+                padding: 0.6rem 0;
+                margin-bottom: 10px;
+            }
+            
+            /* 游戏说明调整 */
+            .instructions {
+                font-size: 0.65rem;
+                margin-top: 8px;
+                gap: 6px;
+            }
+            
+            .instruction-icon {
+                font-size: 0.9rem;
+                min-width: 16px;
+            }
+            
+            /* 控制按钮调整 */
+            .controls-row {
+                margin-top: 8px;
+                gap: 12px;
+            }
+            
+            .game-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 16px;
+            }
+            
+            /* 标题调整 */
+            .instructions-title {
+                font-size: 0.75rem;
+                margin-bottom: 10px;
+                padding-bottom: 6px;
+            }
+            
+            /* 排行榜标签和导航按钮 */
+            .tab-btn {
+                font-size: 0.6rem;
+                padding: 6px 0;
+            }
+            
             .pagination-controls {
-                padding-top: 5px;
-                position: relative;
-                box-shadow: none;
+                margin-top: 8px;
+                padding-top: 6px;
             }
             
             .pagination-btn {
-                width: 24px;
-                height: 24px;
-                font-size: 12px;
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
             }
             
             .page-info {
-                font-size: 0.5rem;
+                font-size: 0.45rem;
             }
         }
         
@@ -707,115 +738,68 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: 15px;
             padding-top: 10px;
             border-top: 1px solid rgba(157, 25, 255, 0.3);
-            margin-top: auto; /* 将分页控件推到底部 */
-            position: sticky;
-            bottom: 0;
-            background-color: #0d0b2a;
-            z-index: 5;
-            width: 100%;
-            left: 0;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
         }
         
         .pagination-btn {
+            background: rgba(15, 15, 45, 0.7);
+            border: 1px solid rgba(157, 25, 255, 0.5);
+            color: #f0f8ff;
+            border-radius: 4px;
             width: 30px;
             height: 30px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #9d19ff 0%, #ff2a6a 100%);
-            border: none;
-            color: #f0f8ff;
-            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(157, 25, 255, 0.3);
         }
         
         .pagination-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.3;
             cursor: not-allowed;
-            background: rgba(157, 25, 255, 0.3);
-            box-shadow: none;
         }
         
         .pagination-btn:not(:disabled):hover {
+            background: rgba(25, 25, 60, 0.9);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(157, 25, 255, 0.5);
         }
         
         .page-info {
             font-family: 'Press Start 2P', monospace;
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             color: #f0f8ff;
-            text-shadow: 0 0 5px rgba(157, 25, 255, 0.5);
         }
         
         .loading-indicator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
             text-align: center;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.8rem;
-            color: #f0f8ff;
-            height: 150px;
             padding: 20px;
-            text-shadow: 0 0 10px rgba(157, 25, 255, 0.8);
-            position: relative;
-            overflow: hidden;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        .loading-indicator::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(to right, transparent, #ff2a6a, #9d19ff, transparent);
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            animation: loading-bar 2s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-        
-        @keyframes loading-bar {
-            0% { transform: translateY(-50%) translateX(-100%); }
-            100% { transform: translateY(-50%) translateX(100%); }
-        }
-        
-        /* 当没有数据时显示的消息 */
-        .no-data {
-            text-align: center;
-            font-family: 'Press Start 2P', monospace;
+            color: rgba(240, 248, 255, 0.7);
             font-size: 0.8rem;
-            color: #f0f8ff;
-            padding: 40px 20px;
-            opacity: 0.7;
-            text-shadow: 0 0 10px rgba(255, 42, 106, 0.6);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .no-data, .error-message {
+            text-align: center;
+            padding: 20px;
+            color: rgba(240, 248, 255, 0.7);
+            font-size: 0.7rem;
+            border: 1px dashed rgba(157, 25, 255, 0.3);
+            border-radius: 8px;
+            margin: 15px 0;
         }
         
         .error-message {
-            text-align: center;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.7rem;
-            color: #ff2a6a;
-            padding: 20px;
-            opacity: 0.9;
-            animation: pulse 1.5s infinite;
-            text-shadow: 0 0 10px rgba(255, 42, 106, 0.5);
-            border: 1px dashed rgba(255, 42, 106, 0.3);
-            border-radius: 8px;
-            background: rgba(255, 42, 106, 0.1);
-            margin: 20px 0;
+            color: rgba(255, 42, 106, 0.8);
+            border-color: rgba(255, 42, 106, 0.5);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
         }
         
         /* 移动设备下的样式调整 */
@@ -1092,129 +1076,6 @@
                 margin-bottom: 20px !important;
             }
         }
-        
-        /* 添加玩家名称区域的样式 */
-        .player-name-container {
-            margin-top: 20px;
-            border-top: 1px solid rgba(157, 25, 255, 0.3);
-            padding-top: 15px;
-        }
-        
-        .player-name-input-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            align-items: center;
-        }
-        
-        .player-name-input {
-            flex: 1;
-            background: rgba(13, 11, 42, 0.7);
-            border: 1px solid rgba(157, 25, 255, 0.5);
-            border-radius: 4px;
-            color: #f0f8ff;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.7rem;
-            padding: 10px 12px;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 0 0 8px rgba(157, 25, 255, 0.2);
-        }
-        
-        .player-name-input:focus {
-            outline: none;
-            border-color: rgba(157, 25, 255, 0.8);
-            box-shadow: 0 0 15px rgba(157, 25, 255, 0.4), 0 0 20px rgba(255, 42, 106, 0.2);
-        }
-        
-        .player-name-input::placeholder {
-            color: rgba(240, 248, 255, 0.5);
-            text-transform: uppercase;
-            font-size: 0.6rem;
-        }
-        
-        .player-name-btn {
-            background: linear-gradient(90deg, #9d19ff 0%, #ff2a6a 100%);
-            border: none;
-            border-radius: 50%; /* 改为圆形按钮 */
-            color: #f0f8ff;
-            width: 38px; /* 略微增大尺寸 */
-            height: 38px; /* 略微增大尺寸 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(157, 25, 255, 0.4), 0 0 15px rgba(255, 42, 106, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .player-name-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(157, 25, 255, 0.5), rgba(255, 42, 106, 0.5));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            border-radius: 50%;
-        }
-        
-        .player-name-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 5px 20px rgba(157, 25, 255, 0.6), 0 5px 20px rgba(255, 42, 106, 0.4);
-        }
-        
-        .player-name-btn:hover::before {
-            opacity: 1;
-        }
-        
-        .player-name-btn:active {
-            transform: translateY(1px) scale(0.95);
-            box-shadow: 0 2px 10px rgba(157, 25, 255, 0.4);
-        }
-        
-        .player-name-btn i {
-            font-size: 1.1rem;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-            position: relative;
-            z-index: 2;
-        }
-        
-        @media (max-width: 768px) {
-            .player-name-container {
-                margin-top: 12px;
-                padding-top: 10px;
-            }
-            
-            .player-name-input {
-                font-size: 0.6rem;
-                padding: 8px 10px;
-            }
-            
-            .player-name-btn {
-                width: 34px;
-                height: 34px;
-            }
-        }
-        
-        /* 输入错误的样式 */
-        .player-name-input.input-error {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-            border-color: rgba(255, 0, 0, 0.5);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-        }
-        
-        @keyframes shake {
-            10%, 90% { transform: translateX(-1px); }
-            20%, 80% { transform: translateX(2px); }
-            30%, 50%, 70% { transform: translateX(-3px); }
-            40%, 60% { transform: translateX(3px); }
-        }
     </style>
 </head>
 <body>
@@ -1323,20 +1184,6 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- 玩家名称输入 -->
-                <div class="player-name-container">
-                    <div class="instructions-title">PLAYER NAME</div>
-                    <div class="player-name-input-container">
-                        <input type="text" id="playerNameInput" class="player-name-input" 
-                            placeholder="ENTER YOUR NAME" maxlength="15" 
-                            pattern="[A-Za-z0-9 ]+" 
-                            title="英文字母、数字和空格">
-                        <button id="saveNameBtn" class="player-name-btn">
-                            <i class="bi bi-check-circle"></i>
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1357,9 +1204,6 @@
         // 获取用户IP地址和位置
         async function getUserInfo() {
             try {
-                // 获取玩家名称
-                const playerName = localStorage.getItem('playerName') || generateRandomName();
-                
                 // 先获取IP地址
                 const ipResponse = await fetch('https://api.ipify.org?format=json');
                 const ipData = await ipResponse.json();
@@ -1370,78 +1214,26 @@
                     const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`);
                     const geoData = await geoResponse.json();
                     
+                    // 获取主机名 (使用当前浏览器信息或网络信息)
+                    const hostname = window.location.hostname || 'unknown-host';
+                    
                     return {
                         ip: ip,
-                        playerName: playerName,
+                        hostname: hostname,
                         city: geoData.city || 'Unknown',
                         region: geoData.region || '',
                         country: geoData.country_name || ''
                     };
                 } catch (geoError) {
                     console.warn('获取地理位置失败:', geoError);
-                    return { ip: ip, playerName: playerName, city: 'Unknown', region: '', country: '' };
+                    const hostname = window.location.hostname || 'unknown-host';
+                    return { ip: ip, hostname: hostname, city: 'Unknown', region: '', country: '' };
                 }
             } catch (error) {
                 console.error('获取IP地址失败:', error);
-                const playerName = localStorage.getItem('playerName') || generateRandomName();
-                return { ip: 'Unknown', playerName: playerName, city: 'Unknown', region: '', country: '' };
+                const hostname = window.location.hostname || 'unknown-host';
+                return { ip: 'Unknown', hostname: hostname, city: 'Unknown', region: '', country: '' };
             }
-        }
-        
-        // 生成随机玩家名称
-        function generateRandomName() {
-            const adjectives = ['Cool', 'Epic', 'Swift', 'Brave', 'Mighty', 'Silent', 'Shadow', 'Cosmic', 'Electric', 'Golden'];
-            const nouns = ['Snake', 'Cobra', 'Python', 'Viper', 'Mamba', 'Dragon', 'Serpent', 'Hunter', 'Knight', 'Warrior'];
-            
-            const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-            const noun = nouns[Math.floor(Math.random() * nouns.length)];
-            const number = Math.floor(Math.random() * 100);
-            
-            return `${adj}${noun}${number}`;
-        }
-        
-        // 保存玩家名称
-        function savePlayerName() {
-            const nameInput = document.getElementById('playerNameInput');
-            let playerName = nameInput.value.trim();
-            
-            // 验证输入，只允许英文、数字和空格
-            if (!/^[A-Za-z0-9 ]+$/.test(playerName)) {
-                playerName = playerName.replace(/[^A-Za-z0-9 ]/g, '');
-                nameInput.value = playerName;
-                
-                // 如果清理后为空，生成随机名称
-                if (playerName === '') {
-                    playerName = generateRandomName();
-                    nameInput.value = playerName;
-                }
-                
-                // 显示输入错误的视觉反馈
-                nameInput.classList.add('input-error');
-                setTimeout(() => {
-                    nameInput.classList.remove('input-error');
-                }, 500);
-            }
-            
-            if (playerName === '') {
-                playerName = generateRandomName();
-                nameInput.value = playerName;
-            }
-            
-            localStorage.setItem('playerName', playerName);
-            
-            // 显示提示消息
-            const button = document.getElementById('saveNameBtn');
-            const originalIcon = button.innerHTML;
-            button.innerHTML = '<i class="bi bi-check-lg"></i>';
-            button.style.backgroundColor = '#28a745';
-            
-            setTimeout(() => {
-                button.innerHTML = originalIcon;
-                button.style.backgroundColor = '';
-            }, 1500);
-            
-            return playerName;
         }
         
         // 改进的加载排行榜函数
@@ -1501,14 +1293,6 @@
                     }
                     
                     leaderboard = responseData.data;
-                    
-                    // 确保所有记录都有hostname字段
-                    leaderboard = leaderboard.map(entry => {
-                        if (!entry.hostname) {
-                            entry.hostname = 'unknown-host';
-                        }
-                        return entry;
-                    });
                     
                     // 更新分页信息
                     if (responseData.pagination) {
@@ -1592,9 +1376,86 @@
                         // 如果没有loading指示器，直接更新UI
                         smoothUpdateLeaderboardUI(leaderboard, sort);
                     }
+                } catch (apiError) {
+                    console.warn('Could not load from API, using local storage:', apiError);
+                    
+                    // 使用本地存储作为备用
+                    leaderboard = JSON.parse(localStorage.getItem('snakeLeaderboard')) || [];
+                    
+                    // 确保所有记录都有hostname字段（兼容旧数据）
+                    leaderboard = leaderboard.map(entry => {
+                        if (!entry.hostname) {
+                            entry.hostname = 'unknown-host';
+                        }
+                        return entry;
+                    });
+                    
+                    // 如果没有数据，创建模拟数据
+                    if (leaderboard.length === 0) {
+                        leaderboard = createMockLeaderboardData();
+                        localStorage.setItem('snakeLeaderboard', JSON.stringify(leaderboard));
+                    }
+                    
+                    // 本地排序和分页
+                    if (sort === 'time') {
+                        leaderboard.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    } else {
+                        leaderboard.sort((a, b) => b.score - a.score);
+                    }
+                    
+                    // 计算总页数
+                    totalPages = Math.ceil(leaderboard.length / pageSize);
+                    
+                    // 分页
+                    const startIndex = (page - 1) * pageSize;
+                    const endIndex = startIndex + pageSize;
+                    leaderboard = leaderboard.slice(startIndex, endIndex);
+                    
+                    // 更新分页控件
+                    updatePaginationControls(page, totalPages);
+                    
+                    // 显示API错误提示，但仍然显示数据
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'error-message';
+                    errorMessage.textContent = `API连接失败: ${apiError.message}. 使用本地数据...`;
+                    errorMessage.style.opacity = '0';
+                    errorMessage.style.marginBottom = '10px';
+                    
+                    // 淡出loading指示器
+                    const loadingIndicator = container.querySelector('.loading-indicator');
+                    if (loadingIndicator) {
+                        loadingIndicator.style.transition = 'opacity 0.3s ease';
+                        loadingIndicator.style.opacity = '0';
+                        
+                        // 延迟后移除loading指示器
+                        setTimeout(() => {
+                            // 清空容器
+                            container.innerHTML = '';
+                            
+                            // 添加错误消息
+                            container.appendChild(errorMessage);
+                            void errorMessage.offsetWidth;
+                            errorMessage.style.transition = 'opacity 0.3s ease';
+                            errorMessage.style.opacity = '1';
+                            
+                            // 延迟后更新排行榜
+                            setTimeout(() => {
+                                // 更新UI显示排行榜数据
+                                smoothUpdateLeaderboardUI(leaderboard, sort);
+                            }, 500);
+                        }, 300);
+                    } else {
+                        // 如果没有loading指示器，直接更新UI
+                        smoothUpdateLeaderboardUI(leaderboard, sort);
+                    }
                 }
+                
+                // 删除这个条件判断，避免重复更新 - 已经在各自分支中处理了UI更新
+                // if (!container.querySelector('.error-message')) {
+                //     smoothUpdateLeaderboardUI(leaderboard, sort);
+                // }
             
-                return leaderboard;
+            return leaderboard;
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
                 const container = document.getElementById('leaderboard-container');
@@ -1681,7 +1542,7 @@
                 const scoreData = {
                     id: recordId,
                     ip: userInfo.ip,
-                    playerName: userInfo.playerName,
+                    hostname: userInfo.hostname,
                     score: score,
                     date: date,
                     city: userInfo.city,
@@ -1725,8 +1586,7 @@
                 console.error('Error saving score:', error);
                 
                 // 最后的备用方案：使用本地存储
-                const playerName = localStorage.getItem('playerName') || generateRandomName();
-                const userInfo = { ip: 'Unknown', playerName: playerName, city: 'Unknown', region: '', country: '' };
+                const userInfo = { ip: 'Unknown', city: 'Unknown', region: '', country: '' };
                 await updateLocalLeaderboard(score, userInfo);
                 return false;
             }
@@ -1746,7 +1606,7 @@
             leaderboard.push({ 
                 id: recordId,
                 ip: userInfo.ip,
-                playerName: userInfo.playerName,
+                hostname: userInfo.hostname,
                 score: score,
                 date: currentDate,
                 city: userInfo.city,
@@ -1832,9 +1692,9 @@
                     idx < 2 ? part : '**'
                 ).join('.');
                 
-                // 创建显示名称: 玩家名称@掩码IP
-                const displayName = entry.playerName ? 
-                    `${entry.playerName}@${maskedIP}` : 
+                // 创建显示名称: 主机名+掩码IP
+                const displayName = entry.hostname ? 
+                    `${entry.hostname}@${maskedIP}` : 
                     maskedIP;
                 
                 // 格式化日期为北京时间，精确到秒
@@ -1969,72 +1829,6 @@
             
             // 加载初始排行榜数据
             await loadLeaderboard('score', 1);
-            
-            // 初始化玩家名称输入框
-            const playerNameInput = document.getElementById('playerNameInput');
-            const saveNameBtn = document.getElementById('saveNameBtn');
-            
-            // 加载已保存的名称
-            const savedName = localStorage.getItem('playerName');
-            if (savedName) {
-                playerNameInput.value = savedName;
-            } else {
-                // 生成随机名称
-                const randomName = generateRandomName();
-                playerNameInput.value = randomName;
-                localStorage.setItem('playerName', randomName);
-            }
-            
-            // 添加保存按钮事件
-            saveNameBtn.addEventListener('click', savePlayerName);
-            
-            // 回车键也可以保存
-            playerNameInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    savePlayerName();
-                }
-                
-                // 阻止WASD、箭头键和空格传播到游戏控制
-                const gameControlKeys = ['w', 'a', 's', 'd', 'W', 'A', 'S', 'D', 
-                                        'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'p', 'P'];
-                if (gameControlKeys.includes(e.key)) {
-                    e.stopPropagation(); // 阻止事件冒泡
-                }
-            });
-            
-            // 添加输入过滤，实时移除不符合规则的字符
-            playerNameInput.addEventListener('input', (e) => {
-                const value = e.target.value;
-                const sanitized = value.replace(/[^A-Za-z0-9 ]/g, '');
-                
-                if (value !== sanitized) {
-                    e.target.value = sanitized;
-                    
-                    // 显示轻微错误提示
-                    playerNameInput.classList.add('input-error');
-                    setTimeout(() => {
-                        playerNameInput.classList.remove('input-error');
-                    }, 300);
-                }
-            });
-            
-            // 当输入框获得焦点时，暂停游戏控制以防止干扰
-            playerNameInput.addEventListener('focus', () => {
-                // 如果游戏正在进行，可以考虑自动暂停游戏
-                // 或禁用键盘输入事件直到输入框失去焦点
-                console.log('Input field focused, game controls temporarily disabled');
-            });
-            
-            // 防止键盘事件触发游戏控制，确保可以正常输入
-            document.addEventListener('keydown', function(e) {
-                // 如果当前焦点在输入框，不要处理游戏控制键
-                if (document.activeElement === playerNameInput) {
-                    // 防止空格滚动页面
-                    if (e.key === ' ') {
-                        e.preventDefault();
-                    }
-                }
-            }, true); // 使用捕获阶段
             
             // 强制游戏容器为完美正方形的函数
             function ensureSquareContainer() {

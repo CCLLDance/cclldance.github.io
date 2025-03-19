@@ -379,7 +379,8 @@ class SnakeRenderer {
             this.drawFood(gameState.food);
         }
         
-        this.drawScore(gameState.score);
+        // 不再在画布上绘制分数，使用外部HTML元素显示分数
+        // this.drawScore(gameState.score);
         
         if (gameState.gameOver) {
             this.drawGameOver(gameState.score);
