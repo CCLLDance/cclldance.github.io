@@ -125,7 +125,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // 创建课程标题
             const lessonHeader = document.createElement('div');
             lessonHeader.className = 'lesson-header expanded';
-            lessonHeader.textContent = `第${course.lessonNumber}课`;
+            
+            // 添加单元图标和文本包装器
+            const unitIcon = document.createElement('i');
+            unitIcon.className = 'bi bi-collection unit-icon';
+            
+            const unitText = document.createElement('span');
+            unitText.textContent = `Unit ${course.lessonNumber}`;
+            
+            lessonHeader.appendChild(unitIcon);
+            lessonHeader.appendChild(unitText);
             
             // 创建集数列表
             const episodeList = document.createElement('ul');
@@ -140,9 +149,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 episodeItem.setAttribute('data-video-url', episode.videoUrl);
                 episodeItem.setAttribute('data-course-link', course.courseLink);
                 
-                const episodeSpan = document.createElement('span');
-                episodeSpan.textContent = `第${episode.episodeNumber}集`;
+                // 添加会话图标
+                const sessionIcon = document.createElement('i');
+                sessionIcon.className = 'bi bi-play-circle session-icon';
                 
+                const episodeSpan = document.createElement('span');
+                episodeSpan.textContent = `Session ${episode.episodeNumber}`;
+                
+                episodeItem.appendChild(sessionIcon);
                 episodeItem.appendChild(episodeSpan);
                 episodeList.appendChild(episodeItem);
             });

@@ -434,8 +434,25 @@ body.loaded {
     border-left: 3px solid var(--accent-color);
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     text-shadow: var(--text-glow);
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    gap: 10px;
+}
+
+.unit-icon {
+    color: var(--accent-tertiary);
+    font-size: 1.1rem;
+    margin-right: 2px;
+    text-shadow: 0 0 8px var(--accent-tertiary);
+    transition: all 0.3s ease;
+}
+
+.lesson-header:hover .unit-icon {
+    transform: scale(1.2);
+    text-shadow: 0 0 12px var(--accent-tertiary);
 }
 
 .lesson-header:hover {
@@ -486,6 +503,30 @@ body.loaded {
     display: flex;
     align-items: center;
     overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    font-weight: 400;
+    gap: 10px;
+}
+
+.session-icon {
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.episode-item:hover .session-icon {
+    color: var(--accent-tertiary);
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+.episode-item.selected .session-icon {
+    color: white;
+    opacity: 1;
+    text-shadow: 0 0 5px white;
 }
 
 .episode-item::before {
@@ -1069,12 +1110,14 @@ body.loaded .preloader {
     
     .lesson-header {
         padding: 10px 12px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.8px;
     }
     
     .episode-item {
         padding: 8px 10px 8px 15px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.3px;
     }
     
     .nav-pills {
@@ -1136,6 +1179,14 @@ body.loaded .preloader {
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
     }
+    
+    .unit-icon {
+        font-size: 1rem;
+    }
+    
+    .session-icon {
+        font-size: 0.8rem;
+    }
 }
 
 /* 小屏幕手机适配 */
@@ -1172,6 +1223,14 @@ body.loaded .preloader {
     .message {
         font-size: 1rem;
         padding: 1rem;
+    }
+    
+    .unit-icon {
+        font-size: 0.9rem;
+    }
+    
+    .session-icon {
+        font-size: 0.75rem;
     }
 }
 
