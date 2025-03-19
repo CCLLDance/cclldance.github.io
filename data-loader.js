@@ -184,8 +184,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 添加自动播放参数
                 const autoplayUrl = videoUrl.includes('?') 
-                    ? `${videoUrl}&autoplay=1&muted=1&playsinline=1` 
-                    : `${videoUrl}?autoplay=1&muted=1&playsinline=1`;
+                    ? `${videoUrl}&autoplay=1&muted=0&playsinline=1` 
+                    : `${videoUrl}?autoplay=1&muted=0&playsinline=1`;
                 
                 // 更新视频播放器，添加自动播放
                 videoPlayer.innerHTML = `<iframe src="${autoplayUrl}" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" playsinline></iframe>`;
@@ -302,8 +302,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // 添加自动播放参数
                         const autoplayUrl = videoUrl.includes('?') 
-                            ? `${videoUrl}&autoplay=1&muted=1&playsinline=1` 
-                            : `${videoUrl}?autoplay=1&muted=1&playsinline=1`;
+                            ? `${videoUrl}&autoplay=1&muted=0&playsinline=1` 
+                            : `${videoUrl}?autoplay=1&muted=0&playsinline=1`;
                         
                         // 更新视频播放器
                         const videoPlayer = document.getElementById('videoPlayer');
