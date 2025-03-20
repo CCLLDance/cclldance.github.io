@@ -1,0 +1,51 @@
+/* 优化移动端触控体验 */
+.game-score {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* 优化触摸区域 */
+.tab-btn, .pagination-btn, .game-btn, .player-name-btn, .start-btn, .overlay-start-btn {
+    touch-action: manipulation;
+}
+
+/* 增强移动端触摸反馈 */
+@media (hover: none) and (pointer: coarse) {
+    /* 按钮点击效果 */
+    .start-btn:active, .overlay-start-btn:active, .pagination-btn:active, .player-name-btn:active {
+        transform: scale(0.95);
+        filter: brightness(1.1);
+        transition: transform 0.1s ease, filter 0.1s ease;
+    }
+    
+    /* 触摸波纹效果 */
+    .game-btn, .pagination-btn, .player-name-btn, .tab-btn {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .game-btn:after, .pagination-btn:after, .player-name-btn:after, .tab-btn:after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+        background-repeat: no-repeat;
+        background-position: 50%;
+        transform: scale(10, 10);
+        opacity: 0;
+        transition: transform 0.3s, opacity 0.5s;
+    }
+    
+    .game-btn:active:after, .pagination-btn:active:after, .player-name-btn:active:after, .tab-btn:active:after {
+        transform: scale(0, 0);
+        opacity: 0.3;
+        transition: 0s;
+    }
+} 

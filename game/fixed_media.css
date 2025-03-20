@@ -1,0 +1,119 @@
+/* 更新全面屏设备适配 */
+@media only screen and 
+    (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3),
+    (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3),
+    (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3),
+    (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2),
+    (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3),
+    (device-width: 360px) and (device-height: 740px) and (-webkit-device-pixel-ratio: 3),
+    (device-width: 412px) and (device-height: 915px) and (-webkit-device-pixel-ratio: 3.5),
+    (device-width: 412px) and (device-height: 892px) and (-webkit-device-pixel-ratio: 3),
+    (device-width: 393px) and (device-height: 851px) and (-webkit-device-pixel-ratio: 3) {
+    
+    /* 适配全面屏幕 */
+    .game-wrapper {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    .leaderboard .content-card {
+        height: calc(35vh - 20px - env(safe-area-inset-top));
+    }
+    
+    .sidebar .content-card {
+        height: calc(25vh - 20px - env(safe-area-inset-bottom));
+        padding-bottom: calc(15px + env(safe-area-inset-bottom));
+    }
+    
+    /* 调整游戏区域在全面屏下的大小 */
+    .game-area {
+        height: calc(40vh + env(safe-area-inset-top) + env(safe-area-inset-bottom));
+    }
+}
+
+/* 添加折叠屏和大屏手机适配 */
+@media (min-width: 400px) and (max-width: 896px) and (min-height: 800px) {
+    /* 竖屏折叠屏/大屏手机 */
+    @media (orientation: portrait) {
+        .leaderboard {
+            max-height: 25vh;
+        }
+        
+        .game-area {
+            height: 55vh;
+        }
+        
+        .sidebar {
+            max-height: 20vh;
+        }
+        
+        .game-score {
+            font-size: 1.4rem;
+        }
+        
+        .overlay-start-btn {
+            font-size: 1.2rem;
+            padding: 1.2rem 2rem;
+        }
+    }
+    
+    /* 横屏折叠屏/大屏手机 */
+    @media (orientation: landscape) {
+        .game-area {
+            width: 65%;
+        }
+        
+        .leaderboard, .sidebar {
+            width: 35%;
+        }
+        
+        .leaderboard-card {
+            padding: 8px;
+        }
+        
+        .player-ip {
+            font-size: 0.6rem;
+        }
+        
+        .player-score {
+            font-size: 0.8rem;
+        }
+    }
+}
+
+/* 调整iPad和平板设备 */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .game-area {
+        padding: 10px;
+    }
+    
+    .leaderboard, .sidebar {
+        padding: 12px;
+    }
+    
+    /* 平板横屏优化 */
+    @media (orientation: landscape) {
+        .game-wrapper {
+            flex-direction: row;
+        }
+        
+        .game-area {
+            width: 60%;
+            height: 100vh;
+        }
+        
+        .leaderboard {
+            width: 20%; 
+            height: 100vh;
+            max-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 20%;
+            height: 100vh;
+            max-height: 100vh;
+        }
+    }
+} 
